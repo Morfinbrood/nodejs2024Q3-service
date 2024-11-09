@@ -9,9 +9,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // удаляет свойства, не указанные в DTO
-      forbidNonWhitelisted: true, // выбрасывает ошибку, если приходят неизвестные свойства
-      transform: true, // автоматически преобразует входящие данные в типы, указанные в DTO
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
