@@ -1,33 +1,115 @@
-// src/services/users/services/users.service.ts
-
-import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../../../shared/database/database.service';
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
-import { User } from '../interfaces/user.interface';
+import { UpdatePasswordDto } from '../dto/update-password.dto';
+import { User } from '../models/user.model';
+import * as bcrypt from 'bcrypt';
+import { DatabaseService } from '../../../shared/database/database.service';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  getAllUsers(): User[] {
-    return this.databaseService.getAllUsers();
+  /**
+   * Checks if the provided string is a valid UUID
+   * @param id The string to validate
+   */
+  isValidUUID(id: string): boolean {
+    return this.databaseService.isValidUUID(id);
   }
 
-  createUser(createUserDto: CreateUserDto): User {
-    const { name, email } = createUserDto;
-    return this.databaseService.createUser(name, email);
+  /**
+   * Retrieves all users
+   */
+  async getAllUsers(): Promise<User[]> {
+    const users = this.databaseService.getAllUsers();
+    return users.map((user) => this.excludePassword(user));
   }
 
-  getUserById(id: number): User | undefined {
-    return this.databaseService.getUserById(id);
+  /**
+   * Retrieves a user by ID
+   * @param id UUID of the user
+   */
+  async getUserById(id: string): Promise<User | undefined> {
+    const user = this.databaseService.getUserById(id);
+    return user ? this.excludePassword(user) : undefined;
   }
 
-  updateUser(id: number, updateUserDto: UpdateUserDto): User | undefined {
-    return this.databaseService.updateUser(id, updateUserDto);
+  /**
+   * Creates a new user
+   * @param createUserDto Data to create a user
+   */
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    const { login, password } = createUserDto;
+
+    // Check for unique login
+    if (
+      this.databaseService.getAllUsers().some((user) => user.login === login)
+    ) {
+      throw new BadRequestException('User already exists');
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = this.databaseService.createUser(login, hashedPassword);
+
+    return this.excludePassword(newUser);
   }
 
-  deleteUser(id: number): boolean {
-    return this.databaseService.deleteUser(id);
+  /**
+   * Updates a user's password
+   * @param id UUID of the user
+   * @param updatePasswordDto Data to update the password
+   */
+  async updateUserPassword(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<User> {
+    const { oldPassword, newPassword } = updatePasswordDto;
+    const user = this.databaseService.getUserById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordValid) {
+      throw new ForbiddenException('Old password is incorrect');
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    const updatedUser = this.databaseService.updateUser(id, {
+      password: hashedNewPassword,
+    });
+
+    if (!updatedUser) {
+      throw new NotFoundException('Old password is incorrect');
+    }
+
+    return this.excludePassword(updatedUser);
+  }
+
+  /**
+   * Deletes a user by ID
+   * @param id UUID of the user
+   */
+  async deleteUser(id: string): Promise<boolean> {
+    const result = this.databaseService.deleteUser(id);
+    if (!result) {
+      throw new NotFoundException('User not found');
+    }
+    return result;
+  }
+
+  /**
+   * Excludes the password field from the user object
+   * @param user The user object
+   */
+  private excludePassword(user: User): User {
+    const { password, ...result } = user;
+    return result;
   }
 }
