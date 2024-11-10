@@ -16,13 +16,13 @@ import {
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
-import { User } from '../models/user.model';
+import { IUser } from '../../../interfaces/user.interfaces';
 import { validate as isUUID } from 'uuid';
 import {
   INVALID_USER_ID,
   USER_NOT_FOUND,
   WRONG_OLD_PASSWORD,
-} from '../../../shared/constants';
+} from '../../../constants';
 import {
   ApiTags,
   ApiOperation,
@@ -45,9 +45,9 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: 'List of all users',
-    type: [User],
+    type: [CreateUserDto],
   })
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<IUser[]> {
     return await this.usersService.getAllUsers();
   }
 
@@ -62,7 +62,7 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: 'User found',
-    type: User,
+    type: CreateUserDto,
   })
   @ApiResponse({
     status: 400,
@@ -72,7 +72,7 @@ export class UsersController {
     status: 404,
     description: USER_NOT_FOUND,
   })
-  async getUserById(@Param('id') id: string): Promise<User> {
+  async getUserById(@Param('id') id: string): Promise<IUser> {
     if (!isUUID(id)) {
       throw new BadRequestException(INVALID_USER_ID);
     }
@@ -99,14 +99,14 @@ export class UsersController {
   @ApiResponse({
     status: 201,
     description: 'User successfully created',
-    type: User,
+    type: CreateUserDto,
   })
   @ApiResponse({
     status: 400,
     description: 'Invalid data for creating a user',
   })
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<IUser> {
     return await this.usersService.createUser(createUserDto);
   }
 
@@ -126,7 +126,7 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: 'Password successfully updated',
-    type: User,
+    type: CreateUserDto,
   })
   @ApiResponse({
     status: 400,
@@ -143,7 +143,7 @@ export class UsersController {
   async updateUserPassword(
     @Param('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ): Promise<User> {
+  ): Promise<IUser> {
     if (!isUUID(id)) {
       throw new BadRequestException(INVALID_USER_ID);
     }

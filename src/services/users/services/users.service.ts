@@ -4,27 +4,30 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdatePasswordDto } from '../dto/update-password.dto';
-import { User } from '../models/user.model';
-import * as bcrypt from 'bcrypt';
-import { DatabaseService } from '../../../shared/database/database.service';
+import { DatabaseService } from '../../../database/database.service';
 import {
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
   WRONG_OLD_PASSWORD,
-} from '../../../shared/constants';
+} from '../../../constants';
+
+import {
+  IUser,
+  ICreateUserDto,
+  IUpdatePasswordDto,
+} from 'src/interfaces/user.interfaces';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<IUser[]> {
     const users = this.databaseService.getAllUsers();
     return users.map((user) => this.excludePassword(user));
   }
 
-  async getUserById(id: string): Promise<User> {
+  async getUserById(id: string): Promise<IUser> {
     const user = this.databaseService.getUserById(id);
     if (!user) {
       throw new NotFoundException(USER_NOT_FOUND);
@@ -32,7 +35,7 @@ export class UsersService {
     return this.excludePassword(user);
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
+  async createUser(createUserDto: ICreateUserDto): Promise<IUser> {
     const { login, password } = createUserDto;
 
     if (this.databaseService.isLoginExists(login)) {
@@ -47,8 +50,8 @@ export class UsersService {
 
   async updateUserPassword(
     id: string,
-    updatePasswordDto: UpdatePasswordDto,
-  ): Promise<User> {
+    updatePasswordDto: IUpdatePasswordDto,
+  ): Promise<IUser> {
     const { oldPassword, newPassword } = updatePasswordDto;
     const user = this.databaseService.getUserById(id);
     if (!user) {
@@ -76,11 +79,9 @@ export class UsersService {
     if (!result) {
       throw new NotFoundException(USER_NOT_FOUND);
     }
-
-    // Here we need to remove the user from the associated data
   }
 
-  private excludePassword(user: User): User {
+  private excludePassword(user: IUser): IUser {
     const result = { ...user };
     delete result.password;
     return result;
