@@ -19,6 +19,7 @@ import { ITrack } from '../../../interfaces/track.interfaces';
 import { validate as isUUID } from 'uuid';
 import { TRACK_NOT_FOUND, INVALID_TRACK_ID } from '../../../constants';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { UpdateTrackDto } from '../dto/update-track.dto';
 
 @ApiTags('Tracks')
 @Controller('track')
@@ -52,6 +53,7 @@ export class TracksController {
     status: 404,
     description: TRACK_NOT_FOUND,
   })
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async getTrackById(@Param('id') id: string): Promise<ITrack> {
     if (!isUUID(id)) {
       throw new BadRequestException(INVALID_TRACK_ID);
@@ -96,9 +98,10 @@ export class TracksController {
     status: 404,
     description: TRACK_NOT_FOUND,
   })
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async updateTrack(
     @Param('id') id: string,
-    @Body() updateTrackDto: Partial<CreateTrackDto>,
+    @Body() updateTrackDto: UpdateTrackDto,
   ): Promise<ITrack> {
     if (!isUUID(id)) {
       throw new BadRequestException(INVALID_TRACK_ID);
@@ -123,6 +126,7 @@ export class TracksController {
     description: TRACK_NOT_FOUND,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async deleteTrack(@Param('id') id: string): Promise<void> {
     if (!isUUID(id)) {
       throw new BadRequestException(INVALID_TRACK_ID);

@@ -72,6 +72,7 @@ export class UsersController {
     status: 404,
     description: USER_NOT_FOUND,
   })
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async getUserById(@Param('id') id: string): Promise<IUser> {
     if (!isUUID(id)) {
       throw new BadRequestException(INVALID_USER_ID);
@@ -140,6 +141,7 @@ export class UsersController {
     status: 404,
     description: USER_NOT_FOUND,
   })
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async updateUserPassword(
     @Param('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
@@ -171,6 +173,7 @@ export class UsersController {
     description: USER_NOT_FOUND,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async deleteUser(@Param('id') id: string): Promise<void> {
     if (!isUUID(id)) {
       throw new BadRequestException(INVALID_USER_ID);
