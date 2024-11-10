@@ -112,6 +112,114 @@ paths:
           description: User not found
       summary: Delete a user
       tags: *ref_0
+  /track:
+    get:
+      operationId: TracksController_getAllTracks
+      parameters: []
+      responses:
+        '200':
+          description: List of all tracks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreateTrackDto'
+      summary: Get all tracks
+      tags: &ref_1
+        - Tracks
+    post:
+      operationId: TracksController_createTrack
+      parameters: []
+      requestBody:
+        required: true
+        description: Data to create a track
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTrackDto'
+      responses:
+        '201':
+          description: Track successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTrackDto'
+      summary: Create a new track
+      tags: *ref_1
+  /track/{id}:
+    get:
+      operationId: TracksController_getTrackById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          description: Track found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTrackDto'
+        '400':
+          description: Invalid track ID format
+        '404':
+          description: Track not found
+      summary: Get a track by ID
+      tags: *ref_1
+    put:
+      operationId: TracksController_updateTrack
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track UUID
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Data to update the track
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTrackDto'
+      responses:
+        '200':
+          description: Track successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTrackDto'
+        '400':
+          description: Invalid track ID format
+        '404':
+          description: Track not found
+      summary: Update track info
+      tags: *ref_1
+    delete:
+      operationId: TracksController_deleteTrack
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '204':
+          description: Track successfully deleted
+        '400':
+          description: Invalid track ID format
+        '404':
+          description: Track not found
+      summary: Delete a track
+      tags: *ref_1
 info:
   title: Home Library Service
   description: Home music library service
@@ -162,3 +270,27 @@ components:
       required:
         - oldPassword
         - newPassword
+    CreateTrackDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the track
+          example: Song Title
+        artistId:
+          type: string
+          description: UUID of the artist
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        albumId:
+          type: string
+          description: UUID of the album
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        duration:
+          type: number
+          description: Duration of the track in seconds
+          example: 240
+      required:
+        - name
+        - duration

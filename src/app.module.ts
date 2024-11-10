@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './services/users/users.module';
+import { TracksModule } from './services/tracks/tracks.module';
 // import { UsersModule } from './services/users/modules/users.module';
 // import { ArtistsModule } from './services/artists/modules/artists.module';
 // import { AlbumsModule } from './services/albums/modules/albums.module';
@@ -13,6 +14,7 @@ import { UsersModule } from './services/users/users.module';
   imports: [
     DatabaseModule,
     UsersModule,
+    TracksModule,
     // ArtistsModule,
     // AlbumsModule,
     // TracksModule,
