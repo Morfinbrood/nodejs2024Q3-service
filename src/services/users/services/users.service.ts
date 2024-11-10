@@ -38,7 +38,7 @@ export class UsersService {
   async createUser(createUserDto: ICreateUserDto): Promise<IUser> {
     const { login, password } = createUserDto;
 
-    if (this.databaseService.isLoginExists(login)) {
+    if (this.databaseService.isUserExists(login)) {
       throw new BadRequestException(USER_ALREADY_EXISTS);
     }
 

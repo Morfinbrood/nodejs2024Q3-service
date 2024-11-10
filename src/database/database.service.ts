@@ -61,7 +61,7 @@ export class DatabaseService {
   }
 
   // User Methods
-  isLoginExists(login: string): boolean {
+  isUserExists(login: string): boolean {
     return this.users.some((user) => user.login === login);
   }
 
