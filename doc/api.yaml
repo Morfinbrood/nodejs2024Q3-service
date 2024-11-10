@@ -187,14 +187,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateTrackDto'
+              $ref: '#/components/schemas/UpdateTrackDto'
       responses:
         '200':
           description: Track successfully updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateTrackDto'
+                $ref: '#/components/schemas/UpdateTrackDto'
         '400':
           description: Invalid track ID format
         '404':
@@ -294,3 +294,22 @@ components:
       required:
         - name
         - duration
+    UpdateTrackDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Track name
+          example: Updated Track Name
+        duration:
+          type: number
+          description: Updated duration of the track in seconds
+          example: 240
+        artistId:
+          type: string
+          description: Updated UUID of the artist
+          example: 0a35dd62-e09f-444b-a628-f4e7c6954f57
+        albumId:
+          type: string
+          description: Updated UUID of the album
+          example: 0a35dd62-e09f-444b-a628-f4e7c6954f57

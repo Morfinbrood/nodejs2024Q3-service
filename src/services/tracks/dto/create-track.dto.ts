@@ -1,6 +1,6 @@
-import { IsString, IsInt, IsUUID, IsOptional } from 'class-validator';
+import { IsString, IsInt, IsUUID, IsOptional, Min, MinLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ICreateTrackDto } from 'src/interfaces/track.interfaces';
+import { ICreateTrackDto } from '../../../interfaces/track.interfaces';
 
 export class CreateTrackDto implements ICreateTrackDto {
   @ApiProperty({
@@ -8,6 +8,7 @@ export class CreateTrackDto implements ICreateTrackDto {
     example: 'Song Title',
   })
   @IsString()
+  @MinLength(4)
   name: string;
 
   @ApiPropertyOptional({
@@ -33,5 +34,6 @@ export class CreateTrackDto implements ICreateTrackDto {
     example: 240,
   })
   @IsInt()
+  @Min(1)
   duration: number;
 }

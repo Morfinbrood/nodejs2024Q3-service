@@ -15,7 +15,7 @@ import {
   IUser,
   ICreateUserDto,
   IUpdatePasswordDto,
-} from 'src/interfaces/user.interfaces';
+} from '../../../interfaces/user.interfaces';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

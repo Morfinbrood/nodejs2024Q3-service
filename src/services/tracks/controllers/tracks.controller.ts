@@ -24,7 +24,7 @@ import { UpdateTrackDto } from '../dto/update-track.dto';
 @ApiTags('Tracks')
 @Controller('track')
 export class TracksController {
-  constructor(private readonly tracksService: TracksService) {}
+  constructor(private readonly tracksService: TracksService) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all tracks' })
@@ -83,12 +83,12 @@ export class TracksController {
   @ApiParam({ name: 'id', description: 'Track UUID', format: 'uuid' })
   @ApiBody({
     description: 'Data to update the track',
-    type: CreateTrackDto,
+    type: UpdateTrackDto,
   })
   @ApiResponse({
     status: 200,
     description: 'Track successfully updated',
-    type: CreateTrackDto,
+    type: UpdateTrackDto,
   })
   @ApiResponse({
     status: 400,
