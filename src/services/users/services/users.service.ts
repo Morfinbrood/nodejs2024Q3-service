@@ -9,62 +9,42 @@ import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { User } from '../models/user.model';
 import * as bcrypt from 'bcrypt';
 import { DatabaseService } from '../../../shared/database/database.service';
+import {
+  USER_ALREADY_EXISTS,
+  USER_NOT_FOUND,
+  WRONG_OLD_PASSWORD,
+} from '../../../shared/constants';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  /**
-   * Checks if the provided string is a valid UUID
-   * @param id The string to validate
-   */
-  isValidUUID(id: string): boolean {
-    return this.databaseService.isValidUUID(id);
-  }
-
-  /**
-   * Retrieves all users
-   */
   async getAllUsers(): Promise<User[]> {
     const users = this.databaseService.getAllUsers();
     return users.map((user) => this.excludePassword(user));
   }
 
-  /**
-   * Retrieves a user by ID
-   * @param id UUID of the user
-   */
-  async getUserById(id: string): Promise<User | undefined> {
+  async getUserById(id: string): Promise<User> {
     const user = this.databaseService.getUserById(id);
-    return user ? this.excludePassword(user) : undefined;
+    if (!user) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
+    return this.excludePassword(user);
   }
 
-  /**
-   * Creates a new user
-   * @param createUserDto Data to create a user
-   */
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { login, password } = createUserDto;
 
-    // Check for unique login
-    if (
-      this.databaseService.getAllUsers().some((user) => user.login === login)
-    ) {
-      throw new BadRequestException('User already exists');
+    if (this.databaseService.isLoginExists(login)) {
+      throw new BadRequestException(USER_ALREADY_EXISTS);
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = this.databaseService.createUser(login, hashedPassword);
 
     return this.excludePassword(newUser);
   }
 
-  /**
-   * Updates a user's password
-   * @param id UUID of the user
-   * @param updatePasswordDto Data to update the password
-   */
   async updateUserPassword(
     id: string,
     updatePasswordDto: UpdatePasswordDto,
@@ -72,12 +52,15 @@ export class UsersService {
     const { oldPassword, newPassword } = updatePasswordDto;
     const user = this.databaseService.getUserById(id);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(USER_NOT_FOUND);
     }
 
-    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
-    if (!isPasswordValid) {
-      throw new ForbiddenException('Old password is incorrect');
+    const isOldPasswordCorrect = await bcrypt.compare(
+      oldPassword,
+      user.password,
+    );
+    if (!isOldPasswordCorrect) {
+      throw new ForbiddenException(WRONG_OLD_PASSWORD);
     }
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
@@ -85,31 +68,21 @@ export class UsersService {
       password: hashedNewPassword,
     });
 
-    if (!updatedUser) {
-      throw new NotFoundException('Old password is incorrect');
-    }
-
     return this.excludePassword(updatedUser);
   }
 
-  /**
-   * Deletes a user by ID
-   * @param id UUID of the user
-   */
-  async deleteUser(id: string): Promise<boolean> {
+  async deleteUser(id: string): Promise<void> {
     const result = this.databaseService.deleteUser(id);
     if (!result) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(USER_NOT_FOUND);
     }
-    return result;
+
+    // Here we need to remove the user from the associated data
   }
 
-  /**
-   * Excludes the password field from the user object
-   * @param user The user object
-   */
   private excludePassword(user: User): User {
-    const { password, ...result } = user;
+    const result = { ...user };
+    delete result.password;
     return result;
   }
 }

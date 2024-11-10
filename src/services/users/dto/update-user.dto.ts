@@ -5,12 +5,12 @@ export class UpdateUserDto {
   @ApiPropertyOptional({
     description: "User's new login",
     example: 'NEW_LOGIN',
-    minLength: 3,
+    minLength: 4,
     maxLength: 255,
   })
   @IsOptional()
   @IsString()
-  @MinLength(3)
+  @MinLength(4)
   @MaxLength(255)
   login?: string;
 

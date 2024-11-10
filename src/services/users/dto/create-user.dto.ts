@@ -5,22 +5,22 @@ export class CreateUserDto {
   @ApiProperty({
     description: 'User login',
     example: 'TEST_LOGIN',
-    minLength: 3,
+    minLength: 4,
     maxLength: 255,
   })
   @IsString()
-  @MinLength(3)
+  @MinLength(4)
   @MaxLength(255)
   login: string;
 
   @ApiProperty({
     description: 'User password',
     example: 'TEST_PASSWORD',
-    minLength: 6,
+    minLength: 4,
     maxLength: 30,
   })
   @IsString()
-  @MinLength(6)
+  @MinLength(4)
   @MaxLength(30)
   password: string;
 }

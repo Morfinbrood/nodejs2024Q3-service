@@ -8,59 +8,57 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
-  BadRequestException,
   NotFoundException,
-  ForbiddenException,
+  UsePipes,
+  ValidationPipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { User } from '../models/user.model';
+import { validate as isUUID } from 'uuid';
+import {
+  INVALID_USER_ID,
+  USER_NOT_FOUND,
+  WRONG_OLD_PASSWORD,
+} from '../../../shared/constants';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiBearerAuth,
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
 
 @ApiTags('Users')
-@ApiBearerAuth()
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   /**
-   * GET /user
-   * Retrieves all users
+   * Get all users
+   * @returns Array of User objects
    */
   @Get()
-  @ApiOperation({ summary: 'Retrieve all users' })
+  @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({
     status: 200,
-    description: 'List of users',
+    description: 'List of all users',
     type: [User],
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized',
   })
   async getAllUsers(): Promise<User[]> {
     return await this.usersService.getAllUsers();
   }
 
   /**
-   * GET /user/:id
-   * Retrieves a user by ID
+   * Get a user by ID
+   * @param id User UUID
+   * @returns User object
    */
   @Get(':id')
-  @ApiOperation({ summary: 'Retrieve a user by ID' })
-  @ApiParam({
-    name: 'id',
-    type: String,
-    description: 'UUID of the user',
-  })
+  @ApiOperation({ summary: 'Get a user by ID' })
+  @ApiParam({ name: 'id', description: 'User UUID', format: 'uuid' })
   @ApiResponse({
     status: 200,
     description: 'User found',
@@ -68,153 +66,116 @@ export class UsersController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid ID format',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized',
+    description: INVALID_USER_ID,
   })
   @ApiResponse({
     status: 404,
-    description: 'User not found',
+    description: USER_NOT_FOUND,
   })
   async getUserById(@Param('id') id: string): Promise<User> {
-    if (!this.usersService.isValidUUID(id)) {
-      throw new BadRequestException('Invalid user ID format');
+    if (!isUUID(id)) {
+      throw new BadRequestException(INVALID_USER_ID);
     }
 
     const user = await this.usersService.getUserById(id);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(USER_NOT_FOUND);
     }
 
     return user;
   }
 
   /**
-   * POST /user
-   * Creates a new user
+   * Create a new user
+   * @param createUserDto Data to create a user
+   * @returns Created User object
    */
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
   @ApiBody({
+    description: 'Data to create a user',
     type: CreateUserDto,
-    description: 'Data required to create a new user',
   })
   @ApiResponse({
     status: 201,
-    description: 'User created',
+    description: 'User successfully created',
     type: User,
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid request data',
+    description: 'Invalid data for creating a user',
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized',
-  })
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.usersService.createUser(createUserDto);
   }
 
   /**
-   * PUT /user/:id
-   * Updates a user's password
+   * Update user password
+   * @param id User UUID
+   * @param updatePasswordDto Data to update the password
+   * @returns Updated User object
    */
   @Put(':id')
-  @ApiOperation({ summary: "Update a user's password" })
-  @ApiParam({
-    name: 'id',
-    type: String,
-    description: 'UUID of the user',
-  })
+  @ApiOperation({ summary: 'Update user password' })
+  @ApiParam({ name: 'id', description: 'User UUID', format: 'uuid' })
   @ApiBody({
+    description: 'Data to update the password',
     type: UpdatePasswordDto,
-    description: 'Data required to update the user password',
   })
   @ApiResponse({
     status: 200,
-    description: 'User password updated',
+    description: 'Password successfully updated',
     type: User,
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid ID or data',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized',
+    description: INVALID_USER_ID,
   })
   @ApiResponse({
     status: 403,
-    description: 'Old password is incorrect',
+    description: WRONG_OLD_PASSWORD,
   })
   @ApiResponse({
     status: 404,
-    description: 'User not found',
+    description: USER_NOT_FOUND,
   })
   async updateUserPassword(
     @Param('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ): Promise<User> {
-    if (!this.usersService.isValidUUID(id)) {
-      throw new BadRequestException('Invalid user ID format');
+    if (!isUUID(id)) {
+      throw new BadRequestException(INVALID_USER_ID);
     }
 
-    const user = await this.usersService.getUserById(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const updatedUser = await this.usersService.updateUserPassword(
-      id,
-      updatePasswordDto,
-    );
-
-    if (!updatedUser) {
-      throw new ForbiddenException('Old password is incorrect');
-    }
-
-    return updatedUser;
+    return await this.usersService.updateUserPassword(id, updatePasswordDto);
   }
 
   /**
-   * DELETE /user/:id
-   * Deletes a user by ID
+   * Delete a user
+   * @param id User UUID
    */
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a user by ID' })
-  @ApiParam({
-    name: 'id',
-    type: String,
-    description: 'UUID of the user',
-  })
+  @ApiOperation({ summary: 'Delete a user' })
+  @ApiParam({ name: 'id', description: 'User UUID', format: 'uuid' })
   @ApiResponse({
     status: 204,
-    description: 'User deleted successfully',
+    description: 'User successfully deleted',
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid ID format',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized',
+    description: INVALID_USER_ID,
   })
   @ApiResponse({
     status: 404,
-    description: 'User not found',
+    description: USER_NOT_FOUND,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') id: string): Promise<void> {
-    if (!this.usersService.isValidUUID(id)) {
-      throw new BadRequestException('Invalid user ID format');
+    if (!isUUID(id)) {
+      throw new BadRequestException(INVALID_USER_ID);
     }
 
-    const userExists = await this.usersService.deleteUser(id);
-    if (!userExists) {
-      throw new NotFoundException('User not found');
-    }
+    await this.usersService.deleteUser(id);
   }
 }

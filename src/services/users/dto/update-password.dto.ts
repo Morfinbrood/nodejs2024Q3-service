@@ -3,20 +3,24 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdatePasswordDto {
   @ApiProperty({
-    description: "User's old password",
+    description: 'Old user password',
     example: 'OLD_PASSWORD',
-  })
-  @IsString()
-  oldPassword: string;
-
-  @ApiProperty({
-    description: "User's new password",
-    example: 'NEW_PASSWORD',
-    minLength: 3,
+    minLength: 4,
     maxLength: 30,
   })
   @IsString()
-  @MinLength(3)
+  @MinLength(4)
+  @MaxLength(30)
+  oldPassword: string;
+
+  @ApiProperty({
+    description: 'New user password',
+    example: 'NEW_PASSWORD',
+    minLength: 4,
+    maxLength: 30,
+  })
+  @IsString()
+  @MinLength(4)
   @MaxLength(30)
   newPassword: string;
 }
