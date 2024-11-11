@@ -1,5 +1,6 @@
 # Home Library Service
-It may seem that there is a lot of repeating code here, since the functionality of the modules is very similar, but I see projects like Yandex Music, where they have the same base, and then they scale and  add functionality very differently each.
+It may seem like there is a lot of repeating code here, since the functionality of the modules is very similar, but I see this project like Yandex.Music, where mudels have the same start base, and then each module is scaled and adds functionality in very different ways.
+At the moment, this is the structure that seems to me to be the most readable and easily scalable and maintainable.
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
