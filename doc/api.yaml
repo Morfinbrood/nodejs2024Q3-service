@@ -832,6 +832,9 @@ components:
           description: UUID of the artist
           example: 1a56dd72-e09f-444b-a628-f4e7c6954d59
           nullable: true
+      required:
+        - name
+        - year
     FavoritesResponseDto:
       type: object
       properties:
