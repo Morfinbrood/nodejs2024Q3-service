@@ -12,7 +12,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CreateUserDto'
+                  $ref: '#/components/schemas/PublicUser'
       summary: Get all users
       tags: &ref_0
         - Users
@@ -32,7 +32,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateUserDto'
+                $ref: '#/components/schemas/PublicUser'
         '400':
           description: Invalid data for creating a user
       summary: Create a new user
@@ -54,7 +54,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateUserDto'
+                $ref: '#/components/schemas/PublicUser'
         '400':
           description: Invalid user ID format
         '404':
@@ -84,7 +84,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateUserDto'
+                $ref: '#/components/schemas/PublicUser'
         '400':
           description: Invalid user ID format
         '403':
@@ -234,6 +234,38 @@ components:
       bearerFormat: JWT
       type: http
   schemas:
+    PublicUser:
+      type: object
+      properties:
+        id:
+          type: string
+          description: UUID of the user
+          example: 0a35dd62-e09f-444b-a628-f4e7c6954f57
+          format: uuid
+        login:
+          type: string
+          description: User login
+          example: TEST_LOGIN
+          minLength: 4
+          maxLength: 255
+        version:
+          type: number
+          description: Version of the user record
+          example: 1
+        createdAt:
+          type: number
+          description: Timestamp of user creation
+          example: 1655000000
+        updatedAt:
+          type: number
+          description: Timestamp of last user update
+          example: 1655000000
+      required:
+        - id
+        - login
+        - version
+        - createdAt
+        - updatedAt
     CreateUserDto:
       type: object
       properties:

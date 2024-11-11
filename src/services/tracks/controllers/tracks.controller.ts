@@ -43,7 +43,7 @@ export class TracksController {
   @ApiResponse({
     status: 200,
     description: 'Track found',
-    type: CreateTrackDto,
+    type: CreateTrackDto, // TODO CHECK IT
   })
   @ApiResponse({
     status: 400,
@@ -88,7 +88,7 @@ export class TracksController {
   @ApiResponse({
     status: 200,
     description: 'Track successfully updated',
-    type: UpdateTrackDto,
+    type: UpdateTrackDto, // TODO CHECK IT
   })
   @ApiResponse({
     status: 400,

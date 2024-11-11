@@ -10,24 +10,32 @@ import {
   USER_NOT_FOUND,
   WRONG_OLD_PASSWORD,
 } from '../../../constants';
-
 import {
-  IUser,
   ICreateUserDto,
   IUpdatePasswordDto,
 } from '../../../interfaces/user.interfaces';
 import * as bcrypt from 'bcrypt';
+import { PublicUser } from '../../models/public-user.model';
+import { User } from '../../models/user.model';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService) { }
 
-  async getAllUsers(): Promise<IUser[]> {
+  async getAllUsers(): Promise<PublicUser[]> {
     const users = this.databaseService.getAllUsers();
     return users.map((user) => this.excludePassword(user));
   }
 
-  async getUserById(id: string): Promise<IUser> {
+  async getUserById(id: string): Promise<User> {
+    const user = this.databaseService.getUserById(id);
+    if (!user) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
+    return user;
+  }
+
+  async getPublicUserById(id: string): Promise<PublicUser> {
     const user = this.databaseService.getUserById(id);
     if (!user) {
       throw new NotFoundException(USER_NOT_FOUND);
@@ -35,7 +43,7 @@ export class UsersService {
     return this.excludePassword(user);
   }
 
-  async createUser(createUserDto: ICreateUserDto): Promise<IUser> {
+  async createUser(createUserDto: ICreateUserDto): Promise<PublicUser> {
     const { login, password } = createUserDto;
 
     if (this.databaseService.isUserExists(login)) {
@@ -51,12 +59,9 @@ export class UsersService {
   async updateUserPassword(
     id: string,
     updatePasswordDto: IUpdatePasswordDto,
-  ): Promise<IUser> {
+  ): Promise<PublicUser> {
     const { oldPassword, newPassword } = updatePasswordDto;
-    const user = this.databaseService.getUserById(id);
-    if (!user) {
-      throw new NotFoundException(USER_NOT_FOUND);
-    }
+    const user = await this.getUserById(id);
 
     const isOldPasswordCorrect = await bcrypt.compare(
       oldPassword,
@@ -81,9 +86,8 @@ export class UsersService {
     }
   }
 
-  private excludePassword(user: IUser): IUser {
-    const result = { ...user };
-    delete result.password;
-    return result;
+  private excludePassword(user: User): PublicUser {
+    const { password, ...publicUser } = user;
+    return publicUser;
   }
 }
