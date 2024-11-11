@@ -361,6 +361,20 @@ export class DatabaseService {
   }
 
   addToFavorites(type: 'artists' | 'albums' | 'tracks', id: string): void {
+    let entityExists = false;
+
+    if (type === 'artists') {
+      entityExists = this.getArtistById(id) !== undefined;
+    } else if (type === 'albums') {
+      entityExists = this.getAlbumById(id) !== undefined;
+    } else if (type === 'tracks') {
+      entityExists = this.getTrackById(id) !== undefined;
+    }
+
+    if (!entityExists) {
+      throw new NotFoundException(`${type} with ${id} not found`);
+    }
+
     if (!this.favorites[type].includes(id)) {
       this.favorites[type].push(id);
     }

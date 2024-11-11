@@ -1,15 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArtistDto } from '../../artist/dto/artist.dto';
-import { AlbumDto } from '../../album/dto/album.dto';
-import { TrackDto } from '../../track/dto/track.dto';
+import { IFavorites } from 'src/interfaces/favorite.interfaces';
 
-export class FavoritesDto {
-    @ApiProperty({ type: [ArtistDto] })
-    artists: ArtistDto[];
+export class FavoritesDto implements IFavorites {
+    @ApiProperty({ type: String, isArray: true })
+    artists: string[];
 
-    @ApiProperty({ type: [AlbumDto] })
-    albums: AlbumDto[];
+    @ApiProperty({ type: String, isArray: true })
+    albums: string[];
 
-    @ApiProperty({ type: [TrackDto] })
-    tracks: TrackDto[];
+    @ApiProperty({ type: String, isArray: true })
+    tracks: string[];
 }

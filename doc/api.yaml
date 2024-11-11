@@ -2,7 +2,7 @@ openapi: 3.0.0
 paths:
   /user:
     get:
-      operationId: UsersController_getAllUsers
+      operationId: UserController_getAllUsers
       parameters: []
       responses:
         '200':
@@ -12,12 +12,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PublicUser'
+                  $ref: '#/components/schemas/PublicUserDto'
       summary: Get all users
       tags: &ref_0
-        - Users
+        - User
     post:
-      operationId: UsersController_createUser
+      operationId: UserController_createUser
       parameters: []
       requestBody:
         required: true
@@ -32,14 +32,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PublicUser'
+                $ref: '#/components/schemas/PublicUserDto'
         '400':
           description: Invalid data for creating a user
       summary: Create a new user
       tags: *ref_0
   /user/{id}:
     get:
-      operationId: UsersController_getUserById
+      operationId: UserController_getUserById
       parameters:
         - name: id
           required: true
@@ -54,7 +54,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PublicUser'
+                $ref: '#/components/schemas/PublicUserDto'
         '400':
           description: Invalid user ID format
         '404':
@@ -62,7 +62,7 @@ paths:
       summary: Get a user by ID
       tags: *ref_0
     put:
-      operationId: UsersController_updateUserPassword
+      operationId: UserController_updateUserPassword
       parameters:
         - name: id
           required: true
@@ -84,7 +84,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PublicUser'
+                $ref: '#/components/schemas/PublicUserDto'
         '400':
           description: Invalid user ID format
         '403':
@@ -94,7 +94,7 @@ paths:
       summary: Update user password
       tags: *ref_0
     delete:
-      operationId: UsersController_deleteUser
+      operationId: UserController_deleteUser
       parameters:
         - name: id
           required: true
@@ -114,7 +114,7 @@ paths:
       tags: *ref_0
   /track:
     get:
-      operationId: TracksController_getAllTracks
+      operationId: TrackController_getAllTracks
       parameters: []
       responses:
         '200':
@@ -124,12 +124,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CreateTrackDto'
+                  $ref: '#/components/schemas/TrackDto'
       summary: Get all tracks
       tags: &ref_1
-        - Tracks
+        - Track
     post:
-      operationId: TracksController_createTrack
+      operationId: TrackController_createTrack
       parameters: []
       requestBody:
         required: true
@@ -144,12 +144,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateTrackDto'
+                $ref: '#/components/schemas/TrackDto'
       summary: Create a new track
       tags: *ref_1
   /track/{id}:
     get:
-      operationId: TracksController_getTrackById
+      operationId: TrackController_getTrackById
       parameters:
         - name: id
           required: true
@@ -164,15 +164,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateTrackDto'
+                $ref: '#/components/schemas/TrackDto'
         '400':
-          description: Invalid track ID format
+          description: Invalid track ID
         '404':
           description: Track not found
       summary: Get a track by ID
       tags: *ref_1
     put:
-      operationId: TracksController_updateTrack
+      operationId: TrackController_updateTrack
       parameters:
         - name: id
           required: true
@@ -194,15 +194,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateTrackDto'
+                $ref: '#/components/schemas/TrackDto'
         '400':
-          description: Invalid track ID format
+          description: Invalid track ID
         '404':
           description: Track not found
       summary: Update track info
       tags: *ref_1
     delete:
-      operationId: TracksController_deleteTrack
+      operationId: TrackController_deleteTrack
       parameters:
         - name: id
           required: true
@@ -215,11 +215,358 @@ paths:
         '204':
           description: Track successfully deleted
         '400':
-          description: Invalid track ID format
+          description: Invalid track ID
         '404':
           description: Track not found
       summary: Delete a track
       tags: *ref_1
+  /artist:
+    get:
+      operationId: ArtistController_getAllArtists
+      parameters: []
+      responses:
+        '200':
+          description: List of all artists
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ArtistDto'
+      summary: Get all artists
+      tags: &ref_2
+        - Artist
+    post:
+      operationId: ArtistController_createArtist
+      parameters: []
+      requestBody:
+        required: true
+        description: Data to create an artist
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateArtistDto'
+      responses:
+        '201':
+          description: Artist successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistDto'
+      summary: Create a new artist
+      tags: *ref_2
+  /artist/{id}:
+    get:
+      operationId: ArtistController_getArtistById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          description: Artist found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistDto'
+        '400':
+          description: Invalid artist ID
+        '404':
+          description: Artist not found
+      summary: Get an artist by ID
+      tags: *ref_2
+    put:
+      operationId: ArtistController_updateArtist
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist UUID
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Data to update the artist
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateArtistDto'
+      responses:
+        '200':
+          description: Artist successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistDto'
+        '400':
+          description: Invalid artist ID
+        '404':
+          description: Artist not found
+      summary: Update artist info
+      tags: *ref_2
+    delete:
+      operationId: ArtistController_deleteArtist
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '204':
+          description: Artist successfully deleted
+        '400':
+          description: Invalid artist ID
+        '404':
+          description: Artist not found
+      summary: Delete an artist
+      tags: *ref_2
+  /album:
+    get:
+      operationId: AlbumController_getAllAlbums
+      parameters: []
+      responses:
+        '200':
+          description: List of all albums
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AlbumDto'
+      summary: Get all albums
+      tags: &ref_3
+        - Album
+    post:
+      operationId: AlbumController_createAlbum
+      parameters: []
+      requestBody:
+        required: true
+        description: Data to create an album
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAlbumDto'
+      responses:
+        '201':
+          description: Album successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlbumDto'
+      summary: Create a new album
+      tags: *ref_3
+  /album/{id}:
+    get:
+      operationId: AlbumController_getAlbumById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          description: Album found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlbumDto'
+        '400':
+          description: Invalid album ID
+        '404':
+          description: Album not found
+      summary: Get an album by ID
+      tags: *ref_3
+    put:
+      operationId: AlbumController_updateAlbum
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album UUID
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Data to update the album
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAlbumDto'
+      responses:
+        '200':
+          description: Album successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlbumDto'
+        '400':
+          description: Invalid album ID
+        '404':
+          description: Album not found
+      summary: Update album info
+      tags: *ref_3
+    delete:
+      operationId: AlbumController_deleteAlbum
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '204':
+          description: Album successfully deleted
+        '400':
+          description: Invalid album ID
+        '404':
+          description: Album not found
+      summary: Delete an album
+      tags: *ref_3
+  /favs:
+    get:
+      operationId: FavoritesController_getAllFavorites
+      parameters: []
+      responses:
+        '200':
+          description: List of all favorites
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoritesDto'
+      summary: Get all favorites
+      tags: &ref_4
+        - Favorites
+  /favs/track/{id}:
+    post:
+      operationId: FavoritesController_addTrackToFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '201':
+          description: Track added to favorites
+        '400':
+          description: Invalid track ID
+        '422':
+          description: Track not found
+      summary: Add track to favorites
+      tags: *ref_4
+    delete:
+      operationId: FavoritesController_removeTrackFromFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '204':
+          description: Track removed from favorites
+        '400':
+          description: Invalid track ID
+        '404':
+          description: Track is not in favorites
+      summary: Remove track from favorites
+      tags: *ref_4
+  /favs/album/{id}:
+    post:
+      operationId: FavoritesController_addAlbumToFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '201':
+          description: Album added to favorites
+        '400':
+          description: Invalid album ID
+        '422':
+          description: Album not found
+      summary: Add album to favorites
+      tags: *ref_4
+    delete:
+      operationId: FavoritesController_removeAlbumFromFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '204':
+          description: Album removed from favorites
+        '400':
+          description: Invalid album ID
+        '404':
+          description: Album is not in favorites
+      summary: Remove album from favorites
+      tags: *ref_4
+  /favs/artist/{id}:
+    post:
+      operationId: FavoritesController_addArtistToFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '201':
+          description: Artist added to favorites
+        '400':
+          description: Invalid artist ID
+        '422':
+          description: Artist not found
+      summary: Add artist to favorites
+      tags: *ref_4
+    delete:
+      operationId: FavoritesController_removeArtistFromFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist UUID
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '204':
+          description: Artist removed from favorites
+        '400':
+          description: Invalid artist ID
+        '404':
+          description: Artist is not in favorites
+      summary: Remove artist from favorites
+      tags: *ref_4
 info:
   title: Home Library Service
   description: Home music library service
@@ -234,7 +581,7 @@ components:
       bearerFormat: JWT
       type: http
   schemas:
-    PublicUser:
+    PublicUserDto:
       type: object
       properties:
         id:
@@ -247,7 +594,7 @@ components:
           description: User login
           example: TEST_LOGIN
           minLength: 4
-          maxLength: 255
+          maxLength: 30
         version:
           type: number
           description: Version of the user record
@@ -274,7 +621,7 @@ components:
           description: User login
           example: TEST_LOGIN
           minLength: 4
-          maxLength: 255
+          maxLength: 30
         password:
           type: string
           description: User password
@@ -302,27 +649,60 @@ components:
       required:
         - oldPassword
         - newPassword
+    TrackDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: UUID of the track
+          example: 0a35dd62-e09f-444b-a628-f4e7c6954f57
+        name:
+          type: string
+          description: Name of the track
+          example: Test Track
+          minLength: 1
+          maxLength: 30
+        artistId:
+          type: string
+          description: UUID of the artist associated with the track
+          example: 1a56dd72-e09f-444b-a628-f4e7c6954d59
+          nullable: true
+        albumId:
+          type: string
+          description: UUID of the album associated with the track
+          example: 3b47dd72-e09f-444b-a628-f4e7c6954d99
+          nullable: true
+        duration:
+          type: number
+          description: Duration of the track in ms
+          example: 240000
+      required:
+        - id
+        - name
+        - duration
     CreateTrackDto:
       type: object
       properties:
         name:
           type: string
           description: Name of the track
-          example: Song Title
+          example: Test Track
+          minLength: 1
+          maxLength: 30
         artistId:
           type: string
-          description: UUID of the artist
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
+          description: UUID of the artist associated with the track
+          example: 1a56dd72-e09f-444b-a628-f4e7c6954d59
+          nullable: true
         albumId:
           type: string
-          description: UUID of the album
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
+          description: UUID of the album associated with the track
+          example: 3b47dd72-e09f-444b-a628-f4e7c6954d99
+          nullable: true
         duration:
           type: number
-          description: Duration of the track in seconds
-          example: 240
+          description: Duration of the track in ms
+          example: 240000
       required:
         - name
         - duration
@@ -331,17 +711,143 @@ components:
       properties:
         name:
           type: string
-          description: Track name
-          example: Updated Track Name
-        duration:
-          type: number
-          description: Updated duration of the track in seconds
-          example: 240
+          description: Name of the track
+          example: Test Track
+          minLength: 1
+          maxLength: 30
         artistId:
           type: string
-          description: Updated UUID of the artist
-          example: 0a35dd62-e09f-444b-a628-f4e7c6954f57
+          description: UUID of the artist associated with the track
+          example: 1a56dd72-e09f-444b-a628-f4e7c6954d59
+          nullable: true
         albumId:
           type: string
-          description: Updated UUID of the album
+          description: UUID of the album associated with the track
+          example: 3b47dd72-e09f-444b-a628-f4e7c6954d99
+          nullable: true
+        duration:
+          type: number
+          description: Duration of the track in ms
+          example: 240000
+    ArtistDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: UUID of the artist
           example: 0a35dd62-e09f-444b-a628-f4e7c6954f57
+        name:
+          type: string
+          description: Name of the artist
+          example: Artist Name
+        grammy:
+          type: boolean
+          description: Indicates if the artist has won a Grammy award
+          example: true
+      required:
+        - id
+        - name
+        - grammy
+    CreateArtistDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the artist
+          example: Artist Name
+        grammy:
+          type: boolean
+          description: Indicates if the artist has won a Grammy award
+          example: true
+      required:
+        - name
+        - grammy
+    UpdateArtistDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Updated name of the artist
+          example: Updated Artist Name
+        grammy:
+          type: boolean
+          description: Updated Grammy award status
+          example: true
+    AlbumDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: UUID of the album
+          example: 0a35dd62-e09f-444b-a628-f4e7c6954f57
+        name:
+          type: string
+          description: Name of the album
+          example: Test Album
+        year:
+          type: number
+          description: Release year of the album
+          example: 2023
+        artistId:
+          type: string
+          description: UUID of the artist
+          example: 1a56dd72-e09f-444b-a628-f4e7c6954d59
+          nullable: true
+      required:
+        - id
+        - name
+        - year
+    CreateAlbumDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the album
+          example: Test Album
+        year:
+          type: number
+          description: Release year of the album
+          example: 2023
+        artistId:
+          type: string
+          description: UUID of the artist
+          example: 1a56dd72-e09f-444b-a628-f4e7c6954d59
+          nullable: true
+      required:
+        - name
+        - year
+    UpdateAlbumDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Updated name of the album
+          example: Updated Album Name
+        year:
+          type: number
+          description: Updated release year of the album
+          example: 2024
+        artistId:
+          type: string
+          description: UUID of the artist
+          example: 1a56dd72-e09f-444b-a628-f4e7c6954d59
+          nullable: true
+    FavoritesDto:
+      type: object
+      properties:
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtistDto'
+        albums:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlbumDto'
+        tracks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackDto'
+      required:
+        - artists
+        - albums
+        - tracks

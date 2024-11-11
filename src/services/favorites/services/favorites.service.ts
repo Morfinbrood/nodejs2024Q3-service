@@ -7,15 +7,14 @@ import {
     UnprocessableEntityException,
 } from '@nestjs/common';
 import { DatabaseService } from '../../../database/database.service';
-import { IFavoritesResponse } from '../../../interfaces/favorite.interfaces';
 import { validate as isUUID } from 'uuid';
-import { FavoritesDto } from '../dto/favorites.dto';
+import { FavoritesResponseDto } from '../dto/favorites-response.dto';
 
 @Injectable()
 export class FavoritesService {
     constructor(private readonly databaseService: DatabaseService) { }
 
-    getAllFavorites(): FavoritesDto  {
+    getAllFavorites(): FavoritesResponseDto  {
         const favorites = this.databaseService.getFavorites();
 
         const artists = favorites.artists.map((artistId) => {

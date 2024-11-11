@@ -8,7 +8,7 @@ import {
     HttpStatus,
 } from '@nestjs/common';
 import { FavoritesService } from '../services/favorites.service';
-import { FavoritesDto } from '../dto/favorites.dto';
+import { FavoritesResponseDto } from '../dto/favorites-response.dto';
 import {
     ApiTags,
     ApiOperation,
@@ -26,9 +26,9 @@ export class FavoritesController {
     @ApiResponse({
         status: 200,
         description: 'List of all favorites',
-        type: FavoritesDto,
+        type: FavoritesResponseDto,
     })
-    getAllFavorites(): FavoritesDto {
+    getAllFavorites(): FavoritesResponseDto {
         return this.favoritesService.getAllFavorites();
     }
 
