@@ -148,17 +148,12 @@ export class DatabaseService {
     return isUUID(id) ? this.users.find((user) => user.id === id) : undefined;
   }
 
-  updateUser(
-    id: string,
-    updatedData: Partial<Omit<IUser, 'id'>>,
-  ): IUser | undefined {
+  updateUserPassword(id: string, newPassword: string): IUser | undefined {
     const user = this.getUserById(id);
     if (user) {
-      if (updatedData.password) {
-        updatedData.password = bcrypt.hashSync(updatedData.password, 10);
-      }
+      const password = bcrypt.hashSync(newPassword, 10);
       Object.assign(user, {
-        ...updatedData,
+        password,
         updatedAt: Date.now(),
         version: user.version + 1,
       });
@@ -194,20 +189,16 @@ export class DatabaseService {
   }
 
   getTrackById(id: string): ITrack | undefined {
-    return isUUID(id) ? this.tracks.find((track) => track.id === id) : undefined;
+    return isUUID(id)
+      ? this.tracks.find((track) => track.id === id)
+      : undefined;
   }
 
   createTrack(trackData: ICreateTrack): ITrack {
-    if (
-      trackData.artistId &&
-      !this.getArtistById(trackData.artistId)
-    ) {
+    if (trackData.artistId && !this.getArtistById(trackData.artistId)) {
       throw new NotFoundException('Artist not found');
     }
-    if (
-      trackData.albumId &&
-      !this.getAlbumById(trackData.albumId)
-    ) {
+    if (trackData.albumId && !this.getAlbumById(trackData.albumId)) {
       throw new NotFoundException('Album not found');
     }
     const newTrack: ITrack = {
@@ -224,16 +215,10 @@ export class DatabaseService {
   updateTrack(id: string, updatedData: IUpdateTrack): ITrack | undefined {
     const track = this.getTrackById(id);
     if (track) {
-      if (
-        updatedData.artistId &&
-        !this.getArtistById(updatedData.artistId)
-      ) {
+      if (updatedData.artistId && !this.getArtistById(updatedData.artistId)) {
         throw new NotFoundException('Artist not found');
       }
-      if (
-        updatedData.albumId &&
-        !this.getAlbumById(updatedData.albumId)
-      ) {
+      if (updatedData.albumId && !this.getAlbumById(updatedData.albumId)) {
         throw new NotFoundException('Album not found');
       }
       Object.assign(track, updatedData);
@@ -258,14 +243,13 @@ export class DatabaseService {
   }
 
   getAlbumById(id: string): IAlbum | undefined {
-    return isUUID(id) ? this.albums.find((album) => album.id === id) : undefined;
+    return isUUID(id)
+      ? this.albums.find((album) => album.id === id)
+      : undefined;
   }
 
   createAlbum(albumData: ICreateAlbum): IAlbum {
-    if (
-      albumData.artistId &&
-      !this.getArtistById(albumData.artistId)
-    ) {
+    if (albumData.artistId && !this.getArtistById(albumData.artistId)) {
       throw new NotFoundException('Artist not found');
     }
     const newAlbum: IAlbum = {
@@ -281,10 +265,7 @@ export class DatabaseService {
   updateAlbum(id: string, updatedData: IUpdateAlbum): IAlbum | undefined {
     const album = this.getAlbumById(id);
     if (album) {
-      if (
-        updatedData.artistId &&
-        !this.getArtistById(updatedData.artistId)
-      ) {
+      if (updatedData.artistId && !this.getArtistById(updatedData.artistId)) {
         throw new NotFoundException('Artist not found');
       }
       Object.assign(album, updatedData);
@@ -314,7 +295,9 @@ export class DatabaseService {
   }
 
   getArtistById(id: string): IArtist | undefined {
-    return isUUID(id) ? this.artists.find((artist) => artist.id === id) : undefined;
+    return isUUID(id)
+      ? this.artists.find((artist) => artist.id === id)
+      : undefined;
   }
 
   createArtist(artistData: ICreateArtist): IArtist {
@@ -380,7 +363,10 @@ export class DatabaseService {
     }
   }
 
-  removeFromFavorites(type: 'artists' | 'albums' | 'tracks', id: string): boolean {
+  removeFromFavorites(
+    type: 'artists' | 'albums' | 'tracks',
+    id: string,
+  ): boolean {
     const index = this.favorites[type].indexOf(id);
     if (index !== -1) {
       this.favorites[type].splice(index, 1);
@@ -388,5 +374,4 @@ export class DatabaseService {
     }
     return false;
   }
-
 }

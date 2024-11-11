@@ -16,7 +16,13 @@ import { TrackService } from '../services/track.service';
 import { TrackDto } from '../dto/track.dto';
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
 import { validate as isUUID } from 'uuid';
 
 @ApiTags('Track')

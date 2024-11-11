@@ -4,9 +4,9 @@ import { AlbumController } from './controllers/album.controller';
 import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-    imports: [DatabaseModule],
-    controllers: [AlbumController],
-    providers: [AlbumService],
-    exports: [AlbumService],
+  imports: [DatabaseModule],
+  controllers: [AlbumController],
+  providers: [AlbumService],
+  exports: [AlbumService],
 })
-export class AlbumModule { }
+export class AlbumModule {}

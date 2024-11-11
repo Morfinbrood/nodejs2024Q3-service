@@ -7,7 +7,6 @@ import {
   Put,
   Delete,
   HttpCode,
-  BadRequestException,
   UsePipes,
   ValidationPipe,
   ParseUUIDPipe,
@@ -64,18 +63,31 @@ export class UserController {
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
   @ApiBody({ description: 'Data to create a user', type: CreateUserDto })
-  @ApiResponse({ status: 201, description: 'User successfully created', type: PublicUserDto })
+  @ApiResponse({
+    status: 201,
+    description: 'User successfully created',
+    type: PublicUserDto,
+  })
   @ApiResponse({ status: 400, description: 'Invalid data for creating a user' })
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<PublicUserDto> {
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<PublicUserDto> {
     return await this.usersService.createUser(createUserDto);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update user password' })
   @ApiParam({ name: 'id', description: 'User UUID', format: 'uuid' })
-  @ApiBody({ description: 'Data to update the password', type: UpdatePasswordDto })
-  @ApiResponse({ status: 200, description: 'Password successfully updated', type: PublicUserDto })
+  @ApiBody({
+    description: 'Data to update the password',
+    type: UpdatePasswordDto,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Password successfully updated',
+    type: PublicUserDto,
+  })
   @ApiResponse({ status: 400, description: INVALID_USER_ID })
   @ApiResponse({ status: 403, description: WRONG_OLD_PASSWORD })
   @ApiResponse({ status: 404, description: USER_NOT_FOUND })

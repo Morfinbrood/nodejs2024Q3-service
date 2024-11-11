@@ -21,11 +21,17 @@ export class ArtistService {
   }
 
   async createArtist(createArtistDto: CreateArtistDto): Promise<ArtistDto> {
-    return this.databaseService.createArtist(createArtistDto); 
+    return this.databaseService.createArtist(createArtistDto);
   }
 
-  async updateArtist(id: string, updateArtistDto: UpdateArtistDto): Promise<ArtistDto> {
-    const updatedArtist = this.databaseService.updateArtist(id, updateArtistDto);
+  async updateArtist(
+    id: string,
+    updateArtistDto: UpdateArtistDto,
+  ): Promise<ArtistDto> {
+    const updatedArtist = this.databaseService.updateArtist(
+      id,
+      updateArtistDto,
+    );
     if (!updatedArtist) {
       throw new NotFoundException('Artist not found');
     }

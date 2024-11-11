@@ -6,7 +6,7 @@ import { UpdateTrackDto } from '../dto/update-track.dto';
 
 @Injectable()
 export class TrackService {
-  constructor(private readonly databaseService: DatabaseService) { }
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async getAllTracks(): Promise<TrackDto[]> {
     return this.databaseService.getAllTracks();
@@ -23,8 +23,11 @@ export class TrackService {
   async createTrack(createTrackDto: CreateTrackDto): Promise<TrackDto> {
     return this.databaseService.createTrack(createTrackDto); // предполагается, что createTrack создаст и вернет TrackDto с id
   }
-  
-  async updateTrack(id: string, updateTrackDto: UpdateTrackDto): Promise<TrackDto> {
+
+  async updateTrack(
+    id: string,
+    updateTrackDto: UpdateTrackDto,
+  ): Promise<TrackDto> {
     const updatedTrack = this.databaseService.updateTrack(id, updateTrackDto);
     if (!updatedTrack) {
       throw new NotFoundException('Track not found');

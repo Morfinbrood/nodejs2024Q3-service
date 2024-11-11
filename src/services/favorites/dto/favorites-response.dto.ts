@@ -5,12 +5,12 @@ import { TrackDto } from '../../track/dto/track.dto';
 import { IFavoritesResponse } from 'src/interfaces/favorite.interfaces';
 
 export class FavoritesResponseDto implements IFavoritesResponse {
-    @ApiProperty({ type: [ArtistDto] })
-    artists: ArtistDto[];
+  @ApiProperty({ type: [ArtistDto] })
+  artists: ArtistDto[];
 
-    @ApiProperty({ type: [AlbumDto] })
-    albums: AlbumDto[];
+  @ApiProperty({ type: [AlbumDto] })
+  albums: AlbumDto[];
 
-    @ApiProperty({ type: [TrackDto] })
-    tracks: TrackDto[];
+  @ApiProperty({ type: [TrackDto] })
+  tracks: TrackDto[];
 }

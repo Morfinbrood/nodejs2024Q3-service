@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import { boldGreenPrint } from './utils/color.utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,7 +17,9 @@ async function bootstrap() {
   // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('Music Home Libriry API')
-    .setDescription('API for managing users, tracks, albums, artists and favorites')
+    .setDescription(
+      'API for managing users, tracks, albums, artists and favorites',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();
@@ -28,11 +29,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 4000;
   await app.listen(port);
-  console.log(
-    boldGreenPrint(`Application is running on: http://localhost:${port}`),
-  );
-  console.log(
-    boldGreenPrint(`Swagger UI available at: http://localhost:${port}/api`),
-  );
+  console.log(`Application is running on: http://localhost:${port}`);
+  console.log(`Swagger UI available at: http://localhost:${port}/api`);
 }
 bootstrap();

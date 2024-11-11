@@ -50,22 +50,20 @@ export class UserService {
   ): Promise<PublicUser> {
     const { oldPassword, newPassword } = updatePasswordDto;
 
-    const isOldPasswordCorrect = await this.databaseService.validateUserPassword(
-      id,
-      oldPassword,
-    );
+    const isOldPasswordCorrect =
+      await this.databaseService.validateUserPassword(id, oldPassword);
 
     if (!isOldPasswordCorrect) {
       throw new ForbiddenException(WRONG_OLD_PASSWORD);
     }
 
-    const updatedUser = this.databaseService.updateUser(id, {
-      password: newPassword,
-    });
+    const updatedUser = this.databaseService.updateUserPassword(
+      id,
+      newPassword,
+    );
 
     return this.excludePassword(updatedUser);
   }
-
   async deleteUser(id: string): Promise<void> {
     const result = this.databaseService.deleteUser(id);
     if (!result) {
@@ -74,6 +72,7 @@ export class UserService {
   }
 
   private excludePassword(user: IUser): PublicUser {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...publicUser } = user;
     return publicUser;
   }
