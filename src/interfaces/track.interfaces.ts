@@ -6,14 +6,14 @@ export interface ITrack {
   duration: number; // integer number
 }
 
-export interface ICreateTrackDto {
+export interface ICreateTrack {
   name: string;
   artistId?: string | null; // refers to Artist
   albumId?: string | null; // refers to Album
   duration: number; // integer number
 }
 
-export interface IUpdateTrackDto {
+export interface IUpdateTrack {
   name?: string;
   duration?: number;
   artistId?: string | null;

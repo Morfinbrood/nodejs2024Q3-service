@@ -1,8 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsString, IsInt, Min, MaxLength, MinLength, IsOptional, Max } from 'class-validator';
-import { IUpdateTrackDto } from 'src/interfaces/track.interfaces';
+import { IUpdateTrack } from 'src/interfaces/track.interfaces';
 
-export class UpdateTrackDto implements IUpdateTrackDto{
+export class UpdateTrackDto implements IUpdateTrack {
   @ApiPropertyOptional({
     description: 'Name of the track',
     example: 'Test Track',

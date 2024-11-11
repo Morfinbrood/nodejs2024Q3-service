@@ -1,8 +1,8 @@
 import { IsString, MinLength, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IUpdatePasswordDto } from '../../../interfaces/user.interfaces';
+import { IUpdatePassword } from '../../../interfaces/user.interfaces';
 
-export class UpdatePasswordDto implements IUpdatePasswordDto {
+export class UpdatePasswordDto implements IUpdatePassword {
   @ApiProperty({
     description: 'Old user password',
     example: 'OLD_PASSWORD',

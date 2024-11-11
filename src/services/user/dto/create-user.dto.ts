@@ -1,8 +1,8 @@
 import { IsString, MinLength, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { ICreateUserDto } from '../../../interfaces/user.interfaces';
+import { ICreateUser } from '../../../interfaces/user.interfaces';
 
-export class CreateUserDto implements ICreateUserDto {
+export class CreateUserDto implements ICreateUser {
   @ApiProperty({
     description: 'User login',
     example: 'TEST_LOGIN',

@@ -7,12 +7,12 @@ export interface IUser {
   updatedAt: number; // timestamp of last update
 }
 
-export interface ICreateUserDto {
+export interface ICreateUser {
   login: string;
   password: string;
 }
 
-export interface IUpdatePasswordDto {
+export interface IUpdatePassword {
   oldPassword: string; // previous password
   newPassword: string; // new password
 }

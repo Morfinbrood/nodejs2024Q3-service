@@ -10,13 +10,11 @@ import {
   USER_NOT_FOUND,
   WRONG_OLD_PASSWORD,
 } from '../../../constants';
-import {
-  ICreateUserDto,
-  IUpdatePasswordDto,
-} from '../../../interfaces/user.interfaces';
 import * as bcrypt from 'bcrypt';
 import { PublicUser } from '../../models/public-user.model';
 import { User } from '../../models/user.model';
+import { UpdatePasswordDto } from '../dto/update-password.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
 
 @Injectable()
 export class UserService {
@@ -43,7 +41,7 @@ export class UserService {
     return this.excludePassword(user);
   }
 
-  async createUser(createUserDto: ICreateUserDto): Promise<PublicUser> {
+  async createUser(createUserDto: CreateUserDto): Promise<PublicUser> {
     const { login, password } = createUserDto;
 
     if (this.databaseService.isUserExists(login)) {
@@ -58,7 +56,7 @@ export class UserService {
 
   async updateUserPassword(
     id: string,
-    updatePasswordDto: IUpdatePasswordDto,
+    updatePasswordDto: UpdatePasswordDto,
   ): Promise<PublicUser> {
     const { oldPassword, newPassword } = updatePasswordDto;
     const userPassword = await this.getUserPasswordById(id);

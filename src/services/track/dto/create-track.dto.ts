@@ -1,8 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsString, IsInt, Min, MaxLength, MinLength, IsOptional, Max } from 'class-validator';
-import { ICreateTrackDto } from 'src/interfaces/track.interfaces';
+import { ICreateTrack } from 'src/interfaces/track.interfaces';
 
-export class CreateTrackDto implements ICreateTrackDto {
+export class CreateTrackDto implements ICreateTrack {
   @ApiProperty({
     description: 'Name of the track',
     example: 'Test Track',
@@ -14,7 +14,7 @@ export class CreateTrackDto implements ICreateTrackDto {
   @MaxLength(30)
   name: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'UUID of the artist associated with the track',
     example: '1a56dd72-e09f-444b-a628-f4e7c6954d59',
     nullable: true,
@@ -23,7 +23,7 @@ export class CreateTrackDto implements ICreateTrackDto {
   @IsOptional()
   artistId?: string | null;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'UUID of the album associated with the track',
     example: '3b47dd72-e09f-444b-a628-f4e7c6954d99',
     nullable: true,

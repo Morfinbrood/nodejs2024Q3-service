@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsString, IsInt, Min, MaxLength, MinLength, Max } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsUUID, IsString, IsInt, Min, MaxLength, MinLength, Max, IsOptional } from 'class-validator';
 import { ITrack } from 'src/interfaces/track.interfaces';
 
 export class TrackDto implements ITrack {
@@ -22,22 +22,24 @@ export class TrackDto implements ITrack {
     @MaxLength(30)
     name: string;
 
-    @ApiProperty({
+    @ApiPropertyOptional({
         description: 'UUID of the artist associated with the track',
         example: '1a56dd72-e09f-444b-a628-f4e7c6954d59',
         nullable: true,
     })
     @IsUUID()
     @IsString()
+    @IsOptional()
     artistId: string | null;
 
-    @ApiProperty({
+    @ApiPropertyOptional({
         description: 'UUID of the album associated with the track',
         example: '3b47dd72-e09f-444b-a628-f4e7c6954d99',
         nullable: true,
     })
     @IsUUID()
     @IsString()
+    @IsOptional()
     albumId: string | null;
 
     @ApiProperty({
