@@ -7,11 +7,11 @@ export class CreateUserDto implements ICreateUserDto {
     description: 'User login',
     example: 'TEST_LOGIN',
     minLength: 4,
-    maxLength: 255,
+    maxLength: 30,
   })
   @IsString()
   @MinLength(4)
-  @MaxLength(255)
+  @MaxLength(30)
   login: string;
 
   @ApiProperty({

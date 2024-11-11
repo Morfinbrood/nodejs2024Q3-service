@@ -27,12 +27,12 @@ export class UsersService {
     return users.map((user) => this.excludePassword(user));
   }
 
-  async getUserById(id: string): Promise<User> {
+  async getUserPasswordById(id: string): Promise<string> {
     const user = this.databaseService.getUserById(id);
     if (!user) {
       throw new NotFoundException(USER_NOT_FOUND);
     }
-    return user;
+    return user.password;
   }
 
   async getPublicUserById(id: string): Promise<PublicUser> {
@@ -61,11 +61,11 @@ export class UsersService {
     updatePasswordDto: IUpdatePasswordDto,
   ): Promise<PublicUser> {
     const { oldPassword, newPassword } = updatePasswordDto;
-    const user = await this.getUserById(id);
+    const userPassword = await this.getUserPasswordById(id);
 
     const isOldPasswordCorrect = await bcrypt.compare(
       oldPassword,
-      user.password,
+      userPassword,
     );
     if (!isOldPasswordCorrect) {
       throw new ForbiddenException(WRONG_OLD_PASSWORD);

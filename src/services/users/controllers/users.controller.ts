@@ -59,7 +59,7 @@ export class UsersController {
     if (!isUUID(id)) {
       throw new BadRequestException(INVALID_USER_ID);
     }
-    return await this.usersService.getUserById(id);
+    return await this.usersService.getPublicUserById(id);
   }
 
   @Post()
