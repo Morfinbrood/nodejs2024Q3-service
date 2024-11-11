@@ -11,7 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UsersService } from '../services/users.service';
+import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { PublicUserDto } from '../dto/public-user.dto';
@@ -29,10 +29,10 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 
-@ApiTags('Users')
+@ApiTags('User')
 @Controller('user')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+export class UserController {
+  constructor(private readonly usersService: UserService) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })

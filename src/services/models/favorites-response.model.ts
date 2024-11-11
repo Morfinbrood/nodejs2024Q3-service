@@ -1,4 +1,4 @@
-import { IFavoritesResponse } from "src/interfaces/favorites-response.interface";
+import { IFavoritesResponse } from "src/interfaces/favorites-response.interfaces";
 import { Artist } from "./artist.model";
 import { Track } from "./track.model";
 import { Album } from "./album.model";

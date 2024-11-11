@@ -1,4 +1,4 @@
-import { ITrack } from 'src/interfaces/track.interface';
+import { ITrack } from 'src/interfaces/track.interfaces';
 
 export class Track implements ITrack {
     id: string;

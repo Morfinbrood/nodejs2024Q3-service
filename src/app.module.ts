@@ -1,23 +1,20 @@
 import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from './database/database.module';
-import { UsersModule } from './services/users/users.module';
-import { TracksModule } from './services/tracks/tracks.module';
-// import { UsersModule } from './services/users/modules/users.module';
-// import { ArtistsModule } from './services/artists/modules/artists.module';
-// import { AlbumsModule } from './services/albums/modules/albums.module';
-// import { TracksModule } from './services/tracks/modules/tracks.module';
+import { UserModule } from './services/user/user.module';
+import { TrackModule } from './services/track/track.module';
+// import { ArtistModule } from './services/artists/modules/artists.module';
+// import { AlbumModule } from './services/albums/modules/albums.module';
 // import { FavoritesModule } from './services/favorites/modules/favorites.module';
 // import { AuthModule } from './services/auth/modules/auth.module';
 
 @Module({
   imports: [
     DatabaseModule,
-    UsersModule,
-    TracksModule,
-    // ArtistsModule,
-    // AlbumsModule,
-    // TracksModule,
+    UserModule,
+    TrackModule,
+    // ArtistModule,
+    // AlbumModule,
     // FavoritesModule,
     // AuthModule,
   ],

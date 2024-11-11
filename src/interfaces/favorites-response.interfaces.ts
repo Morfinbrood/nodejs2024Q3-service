@@ -1,6 +1,6 @@
 import { IAlbum } from "./album.interfaces";
-import { IArtist } from "./artist.interface";
-import { ITrack } from "./track.interface";
+import { IArtist } from "./artist.interfaces";
+import { ITrack } from "./track.interfaces";
 
 
 export interface IFavoritesResponse {

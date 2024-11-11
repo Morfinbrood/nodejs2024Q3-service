@@ -7,6 +7,7 @@ export class PublicUserDto {
         example: '0a35dd62-e09f-444b-a628-f4e7c6954f57',
         format: 'uuid',
     })
+    @IsString()
     @IsUUID()
     id: string;
 

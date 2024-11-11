@@ -8,8 +8,8 @@ export interface ITrack {
 
 export interface ICreateTrackDto {
   name: string;
-  artistId: string | null; // refers to Artist
-  albumId: string | null; // refers to Album
+  artistId?: string | null; // refers to Artist
+  albumId?: string | null; // refers to Album
   duration: number; // integer number
 }
 

@@ -13,13 +13,13 @@ import {
 import {
   ICreateUserDto,
   IUpdatePasswordDto,
-} from '../../../interfaces/user.interface';
+} from '../../../interfaces/user.interfaces';
 import * as bcrypt from 'bcrypt';
 import { PublicUser } from '../../models/public-user.model';
 import { User } from '../../models/user.model';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(private readonly databaseService: DatabaseService) { }
 
   async getAllUsers(): Promise<PublicUser[]> {

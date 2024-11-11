@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4, validate as isUUID } from 'uuid';
 import * as bcrypt from 'bcrypt';
-import { IUser } from 'src/interfaces/user.interface';
-import { ITrack } from 'src/interfaces/track.interface';
-import { UpdateTrackDto } from 'src/services/tracks/dto/update-track.dto';
+import { IUser } from 'src/interfaces/user.interfaces';
+import { ICreateTrackDto, ITrack, IUpdateTrackDto } from 'src/interfaces/track.interfaces';
 
 @Injectable()
 export class DatabaseService {
@@ -72,7 +71,7 @@ export class DatabaseService {
   createUser(login: string, password: string): IUser {
     const newUser: IUser = {
       id: uuidv4(),
-      login,  
+      login,
       password,
       version: 1,
       createdAt: Date.now(),
@@ -112,6 +111,10 @@ export class DatabaseService {
   }
 
   // Track Methods
+  isTrackExists(trackName: string): boolean {
+    return this.tracks.some((track) => track.name === trackName);
+  }
+
   getAllTracks(): ITrack[] {
     return this.tracks;
   }
@@ -120,16 +123,19 @@ export class DatabaseService {
     return isUUID(id) ? this.tracks.find((track) => track.id === id) : undefined;
   }
 
-  createTrack(trackData: Omit<ITrack, 'id'>): ITrack {
+  createTrack(trackData: ICreateTrackDto): ITrack {
     const newTrack: ITrack = {
       id: uuidv4(),
-      ...trackData,
+      name: trackData.name,
+      artistId: trackData.artistId ?? null,
+      albumId: trackData.albumId ?? null,
+      duration: trackData.duration,
     };
     this.tracks.push(newTrack);
     return newTrack;
   }
 
-  updateTrack(id: string, updatedData: UpdateTrackDto): ITrack | undefined {
+  updateTrack(id: string, updatedData: IUpdateTrackDto): ITrack | undefined {
     const track = this.getTrackById(id);
     if (track) {
       Object.assign(track, updatedData);
