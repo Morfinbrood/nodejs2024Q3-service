@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4, validate as isUUID } from 'uuid';
 import * as bcrypt from 'bcrypt';
-import { IUser } from 'src/interfaces/user.interfaces';
-import { ITrack } from 'src/interfaces/track.interfaces';
+import { IUser } from 'src/interfaces/user.interface';
+import { ITrack } from 'src/interfaces/track.interface';
 import { UpdateTrackDto } from 'src/services/tracks/dto/update-track.dto';
 
 @Injectable()

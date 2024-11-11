@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { TracksService } from '../services/tracks.service';
 import { CreateTrackDto } from '../dto/create-track.dto';
-import { ITrack } from '../../../interfaces/track.interfaces';
+import { ITrack } from '../../../interfaces/track.interface';
 import { validate as isUUID } from 'uuid';
 import { TRACK_NOT_FOUND, INVALID_TRACK_ID } from '../../../constants';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';

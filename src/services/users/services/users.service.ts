@@ -13,7 +13,7 @@ import {
 import {
   ICreateUserDto,
   IUpdatePasswordDto,
-} from '../../../interfaces/user.interfaces';
+} from '../../../interfaces/user.interface';
 import * as bcrypt from 'bcrypt';
 import { PublicUser } from '../../models/public-user.model';
 import { User } from '../../models/user.model';

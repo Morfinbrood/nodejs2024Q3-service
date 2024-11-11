@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../../../database/database.service';
-import { ICreateTrackDto, ITrack } from  '../../../interfaces/track.interfaces';
+import { ICreateTrackDto, ITrack } from  '../../../interfaces/track.interface';
 import { TRACK_NOT_FOUND } from '../../../constants';
 import { UpdateTrackDto } from '../dto/update-track.dto';
 

@@ -1,6 +1,6 @@
 import { IsString, IsOptional, IsInt, IsUUID, Min } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IUpdateTrackDto } from '../../../interfaces/track.interfaces';
+import { IUpdateTrackDto } from '../../../interfaces/track.interface';
 
 export class UpdateTrackDto implements IUpdateTrackDto {
     @ApiPropertyOptional({
