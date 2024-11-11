@@ -9,7 +9,7 @@ At the moment, this is the structure that seems to me to be the most readable an
 ## Downloading
 
 ```
-git clone {https://github.com/Morfinbrood/nodejs2024Q3-service}
+git clone https://github.com/Morfinbrood/nodejs2024Q3-service
 ```
 
 ## Installing NPM modules
