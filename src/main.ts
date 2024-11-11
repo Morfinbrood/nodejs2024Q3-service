@@ -17,11 +17,12 @@ async function bootstrap() {
 
   // Swagger setup
   const config = new DocumentBuilder()
-    .setTitle('Users API')
-    .setDescription('API for managing users')
+    .setTitle('Music Home Libriry API')
+    .setDescription('API for managing users, tracks, albums, artists and favorites')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 

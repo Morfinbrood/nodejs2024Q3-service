@@ -1,10 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4, validate as isUUID } from 'uuid';
 import * as bcrypt from 'bcrypt';
-import { IUser } from 'src/interfaces/user.interfaces';
-import { ICreateTrack, ITrack, IUpdateTrack } from 'src/interfaces/track.interfaces';
-import { IAlbum } from 'src/interfaces/album.interfaces';
-import { IArtist } from 'src/interfaces/artist.interfaces';
+
+import { IUser } from '../interfaces/user.interfaces';
+import {
+  ITrack,
+  ICreateTrack,
+  IUpdateTrack,
+} from '../interfaces/track.interfaces';
+import {
+  IAlbum,
+  ICreateAlbum,
+  IUpdateAlbum,
+} from '../interfaces/album.interfaces';
+import {
+  IArtist,
+  ICreateArtist,
+  IUpdateArtist,
+} from '../interfaces/artist.interfaces';
 
 @Injectable()
 export class DatabaseService {
@@ -13,11 +26,14 @@ export class DatabaseService {
   private albums: IAlbum[] = [];
   private artists: IArtist[] = [];
 
+  private initializedArtists: IArtist[] = [];
+  private initializedAlbums: IAlbum[] = [];
+
   constructor() {
     this.initializeUsers();
-    this.initializeTracks();
-    this.initializeAlbums();
     this.initializeArtists();
+    this.initializeAlbums();
+    this.initializeTracks();
   }
 
   // Initialize hardcoded users
@@ -45,56 +61,56 @@ export class DatabaseService {
     );
   }
 
+  // Initialize hardcoded artists
+  private initializeArtists() {
+    const artist1: IArtist = {
+      id: uuidv4(),
+      name: 'Artist 1',
+      grammy: true,
+    };
+    const artist2: IArtist = {
+      id: uuidv4(),
+      name: 'Artist 2',
+      grammy: false,
+    };
+    this.artists.push(artist1, artist2);
+    this.initializedArtists = [artist1, artist2];
+  }
+
+  // Initialize hardcoded albums
+  private initializeAlbums() {
+    const album1: IAlbum = {
+      id: uuidv4(),
+      name: 'Album 1',
+      year: 2021,
+      artistId: this.initializedArtists[0].id,
+    };
+    const album2: IAlbum = {
+      id: uuidv4(),
+      name: 'Album 2',
+      year: 2022,
+      artistId: this.initializedArtists[1].id,
+    };
+    this.albums.push(album1, album2);
+    this.initializedAlbums = [album1, album2];
+  }
+
   // Initialize hardcoded tracks
   private initializeTracks() {
     this.tracks.push(
       {
         id: uuidv4(),
         name: 'Track 1',
-        artistId: uuidv4(),
-        albumId: uuidv4(),
+        artistId: this.initializedArtists[0].id,
+        albumId: this.initializedAlbums[0].id,
         duration: 240,
       },
       {
         id: uuidv4(),
         name: 'Track 2',
-        artistId: uuidv4(),
-        albumId: uuidv4(),
+        artistId: this.initializedArtists[1].id,
+        albumId: this.initializedAlbums[1].id,
         duration: 180,
-      },
-    );
-  }
-
-  // Initialize hardcoded albums
-  private initializeAlbums() {
-    this.albums.push(
-      {
-        id: uuidv4(),
-        name: 'Album 1',
-        year: 2021,
-        artistId: uuidv4(),
-      },
-      {
-        id: uuidv4(),
-        name: 'Album 2',
-        year: 2022,
-        artistId: uuidv4(),
-      },
-    );
-  }
-
-  // Initialize hardcoded artists
-  private initializeArtists() {
-    this.artists.push(
-      {
-        id: uuidv4(),
-        name: 'Artist 1',
-        grammy: true,
-      },
-      {
-        id: uuidv4(),
-        name: 'Artist 2',
-        grammy: false,
       },
     );
   }
@@ -161,6 +177,18 @@ export class DatabaseService {
   }
 
   createTrack(trackData: ICreateTrack): ITrack {
+    if (
+      trackData.artistId &&
+      !this.getArtistById(trackData.artistId)
+    ) {
+      throw new NotFoundException('Artist not found');
+    }
+    if (
+      trackData.albumId &&
+      !this.getAlbumById(trackData.albumId)
+    ) {
+      throw new NotFoundException('Album not found');
+    }
     const newTrack: ITrack = {
       id: uuidv4(),
       name: trackData.name,
@@ -175,6 +203,18 @@ export class DatabaseService {
   updateTrack(id: string, updatedData: IUpdateTrack): ITrack | undefined {
     const track = this.getTrackById(id);
     if (track) {
+      if (
+        updatedData.artistId &&
+        !this.getArtistById(updatedData.artistId)
+      ) {
+        throw new NotFoundException('Artist not found');
+      }
+      if (
+        updatedData.albumId &&
+        !this.getAlbumById(updatedData.albumId)
+      ) {
+        throw new NotFoundException('Album not found');
+      }
       Object.assign(track, updatedData);
       return track;
     }
@@ -199,18 +239,32 @@ export class DatabaseService {
     return isUUID(id) ? this.albums.find((album) => album.id === id) : undefined;
   }
 
-  createAlbum(albumData: Omit<IAlbum, 'id'>): IAlbum {
+  createAlbum(albumData: ICreateAlbum): IAlbum {
+    if (
+      albumData.artistId &&
+      !this.getArtistById(albumData.artistId)
+    ) {
+      throw new NotFoundException('Artist not found');
+    }
     const newAlbum: IAlbum = {
       id: uuidv4(),
-      ...albumData,
+      name: albumData.name,
+      year: albumData.year,
+      artistId: albumData.artistId ?? null,
     };
     this.albums.push(newAlbum);
     return newAlbum;
   }
 
-  updateAlbum(id: string, updatedData: Partial<IAlbum>): IAlbum | undefined {
+  updateAlbum(id: string, updatedData: IUpdateAlbum): IAlbum | undefined {
     const album = this.getAlbumById(id);
     if (album) {
+      if (
+        updatedData.artistId &&
+        !this.getArtistById(updatedData.artistId)
+      ) {
+        throw new NotFoundException('Artist not found');
+      }
       Object.assign(album, updatedData);
       return album;
     }
@@ -221,6 +275,11 @@ export class DatabaseService {
     const index = this.albums.findIndex((album) => album.id === id);
     if (index !== -1) {
       this.albums.splice(index, 1);
+      this.tracks.forEach((track) => {
+        if (track.albumId === id) {
+          track.albumId = null;
+        }
+      });
       return true;
     }
     return false;
@@ -235,16 +294,17 @@ export class DatabaseService {
     return isUUID(id) ? this.artists.find((artist) => artist.id === id) : undefined;
   }
 
-  createArtist(artistData: Omit<IArtist, 'id'>): IArtist {
+  createArtist(artistData: ICreateArtist): IArtist {
     const newArtist: IArtist = {
       id: uuidv4(),
-      ...artistData,
+      name: artistData.name,
+      grammy: artistData.grammy,
     };
     this.artists.push(newArtist);
     return newArtist;
   }
 
-  updateArtist(id: string, updatedData: Partial<IArtist>): IArtist | undefined {
+  updateArtist(id: string, updatedData: IUpdateArtist): IArtist | undefined {
     const artist = this.getArtistById(id);
     if (artist) {
       Object.assign(artist, updatedData);
@@ -257,6 +317,16 @@ export class DatabaseService {
     const index = this.artists.findIndex((artist) => artist.id === id);
     if (index !== -1) {
       this.artists.splice(index, 1);
+      this.tracks.forEach((track) => {
+        if (track.artistId === id) {
+          track.artistId = null;
+        }
+      });
+      this.albums.forEach((album) => {
+        if (album.artistId === id) {
+          album.artistId = null;
+        }
+      });
       return true;
     }
     return false;
