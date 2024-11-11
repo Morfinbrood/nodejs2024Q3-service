@@ -125,10 +125,11 @@ export class DatabaseService {
   }
 
   createUser(login: string, password: string): IUser {
+    const hashedPassword = bcrypt.hashSync(password, 10);
     const newUser: IUser = {
       id: uuidv4(),
       login,
-      password,
+      password: hashedPassword,
       version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -141,9 +142,15 @@ export class DatabaseService {
     return isUUID(id) ? this.users.find((user) => user.id === id) : undefined;
   }
 
-  updateUser(id: string, updatedData: Partial<Omit<IUser, 'id'>>): IUser | undefined {
+  updateUser(
+    id: string,
+    updatedData: Partial<Omit<IUser, 'id'>>,
+  ): IUser | undefined {
     const user = this.getUserById(id);
     if (user) {
+      if (updatedData.password) {
+        updatedData.password = bcrypt.hashSync(updatedData.password, 10);
+      }
       Object.assign(user, {
         ...updatedData,
         updatedAt: Date.now(),
@@ -161,6 +168,14 @@ export class DatabaseService {
       return true;
     }
     return false;
+  }
+
+  async validateUserPassword(id: string, password: string): Promise<boolean> {
+    const user = this.getUserById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return await bcrypt.compare(password, user.password);
   }
 
   // Track Methods

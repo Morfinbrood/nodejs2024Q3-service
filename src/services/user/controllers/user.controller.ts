@@ -10,12 +10,12 @@ import {
   BadRequestException,
   UsePipes,
   ValidationPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { PublicUserDto } from '../dto/public-user.dto';
-import { validate as isUUID } from 'uuid';
 import {
   INVALID_USER_ID,
   USER_NOT_FOUND,
@@ -32,7 +32,7 @@ import {
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly usersService: UserService) { }
+  constructor(private readonly usersService: UserService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
@@ -55,10 +55,9 @@ export class UserController {
   })
   @ApiResponse({ status: 400, description: INVALID_USER_ID })
   @ApiResponse({ status: 404, description: USER_NOT_FOUND })
-  async getUserById(@Param('id') id: string): Promise<PublicUserDto> {
-    if (!isUUID(id)) {
-      throw new BadRequestException(INVALID_USER_ID);
-    }
+  async getUserById(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<PublicUserDto> {
     return await this.usersService.getPublicUserById(id);
   }
 
@@ -82,12 +81,9 @@ export class UserController {
   @ApiResponse({ status: 404, description: USER_NOT_FOUND })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async updateUserPassword(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ): Promise<PublicUserDto> {
-    if (!isUUID(id)) {
-      throw new BadRequestException(INVALID_USER_ID);
-    }
     return await this.usersService.updateUserPassword(id, updatePasswordDto);
   }
 
@@ -98,11 +94,9 @@ export class UserController {
   @ApiResponse({ status: 400, description: INVALID_USER_ID })
   @ApiResponse({ status: 404, description: USER_NOT_FOUND })
   @HttpCode(204)
-  @UsePipes(new ValidationPipe({ whitelist: true }))
-  async deleteUser(@Param('id') id: string): Promise<void> {
-    if (!isUUID(id)) {
-      throw new BadRequestException(INVALID_USER_ID);
-    }
+  async deleteUser(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
     await this.usersService.deleteUser(id);
   }
 }
