@@ -1,5 +1,5 @@
 # Home Library Service
-It may seem like there is a lot of repeating code here, since the functionality of the modules is very similar, but I see this project like Yandex.Music, where mudels have the same start base, and then each module is scaled and adds functionality in very different ways.
+It may seem like there is a lot of repeating code here, since the functionality of the modules is very similar, but I see this project like the Yandex.Music, where modules starts with the same start base, and then each module is scaled and adds functionality in very different ways.
 At the moment, this is the structure that seems to me to be the most readable and easily scalable and maintainable.
 ## Prerequisites
 
