@@ -1,5 +1,5 @@
 # Home Library Service
-
+It may seem that there is a lot of repeating code here, since the functionality of the modules is very similar, but I see projects like Yandex Music, where they have the same base, and then they scale and  add functionality very differently each.
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
@@ -8,7 +8,7 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone {https://github.com/Morfinbrood/nodejs2024Q3-service}
 ```
 
 ## Installing NPM modules
@@ -24,7 +24,7 @@ npm start
 ```
 
 After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
+in your browser OpenAPI documentation by typing http://localhost:4000/api/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
@@ -54,6 +54,11 @@ To run only specific test suite with authorization
 ```
 npm run test:auth -- <path to suite>
 ```
+### Build documentation doc/api.yaml
+
+```
+npm run generate:swagger
+```
 
 ### Auto-fix and format
 
@@ -70,3 +75,5 @@ npm run format
 Press <kbd>F5</kbd> to debug.
 
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+
+
