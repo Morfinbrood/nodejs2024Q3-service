@@ -446,7 +446,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FavoritesDto'
+                $ref: '#/components/schemas/FavoritesResponseDto'
       summary: Get all favorites
       tags: &ref_4
         - Favorites
@@ -832,7 +832,7 @@ components:
           description: UUID of the artist
           example: 1a56dd72-e09f-444b-a628-f4e7c6954d59
           nullable: true
-    FavoritesDto:
+    FavoritesResponseDto:
       type: object
       properties:
         artists:
