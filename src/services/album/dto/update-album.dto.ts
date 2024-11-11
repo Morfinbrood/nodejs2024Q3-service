@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
   IsString,
@@ -11,24 +11,22 @@ import {
 import { IUpdateAlbum } from 'src/interfaces/album.interfaces';
 
 export class UpdateAlbumDto implements IUpdateAlbum {
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Updated name of the album',
     example: 'Updated Album Name',
   })
-  @IsOptional()
   @IsString()
   @MinLength(1)
   @MaxLength(30)
-  name?: string;
+  name: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Updated release year of the album',
     example: 2024,
   })
-  @IsOptional()
   @IsInt()
   @Min(1900)
-  year?: number;
+  year: number;
 
   @ApiPropertyOptional({
     description: 'UUID of the artist',
