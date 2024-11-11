@@ -5,7 +5,7 @@ import { UserModule } from './services/user/user.module';
 import { TrackModule } from './services/track/track.module';
 import { ArtistModule } from './services/artist/artist.module';
 import { AlbumModule } from './services/album/album.module';
-// import { FavoritesModule } from './services/favorites/modules/favorites.module';
+import { FavoritesModule } from './services/favorites/favorites.module';
 // import { AuthModule } from './services/auth/modules/auth.module';
 
 @Module({
@@ -15,7 +15,7 @@ import { AlbumModule } from './services/album/album.module';
     TrackModule,
     ArtistModule,
     AlbumModule,
-    // FavoritesModule,
+    FavoritesModule,
     // AuthModule,
   ],
   controllers: [],

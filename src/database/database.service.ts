@@ -18,6 +18,7 @@ import {
   ICreateArtist,
   IUpdateArtist,
 } from '../interfaces/artist.interfaces';
+import { IFavorites } from '../interfaces/favorite.interfaces';
 
 @Injectable()
 export class DatabaseService {
@@ -25,6 +26,11 @@ export class DatabaseService {
   private tracks: ITrack[] = [];
   private albums: IAlbum[] = [];
   private artists: IArtist[] = [];
+  private favorites: IFavorites = {
+    artists: [],
+    albums: [],
+    tracks: [],
+  };
 
   private initializedArtists: IArtist[] = [];
   private initializedAlbums: IAlbum[] = [];
@@ -240,6 +246,7 @@ export class DatabaseService {
     const index = this.tracks.findIndex((track) => track.id === id);
     if (index !== -1) {
       this.tracks.splice(index, 1);
+      this.removeFromFavorites('artists', id);
       return true;
     }
     return false;
@@ -295,6 +302,7 @@ export class DatabaseService {
           track.albumId = null;
         }
       });
+      this.removeFromFavorites('artists', id);
       return true;
     }
     return false;
@@ -342,8 +350,29 @@ export class DatabaseService {
           album.artistId = null;
         }
       });
+      this.removeFromFavorites('artists', id);
       return true;
     }
     return false;
   }
+
+  getFavorites(): IFavorites {
+    return this.favorites;
+  }
+
+  addToFavorites(type: 'artists' | 'albums' | 'tracks', id: string): void {
+    if (!this.favorites[type].includes(id)) {
+      this.favorites[type].push(id);
+    }
+  }
+
+  removeFromFavorites(type: 'artists' | 'albums' | 'tracks', id: string): boolean {
+    const index = this.favorites[type].indexOf(id);
+    if (index !== -1) {
+      this.favorites[type].splice(index, 1);
+      return true;
+    }
+    return false;
+  }
+
 }
