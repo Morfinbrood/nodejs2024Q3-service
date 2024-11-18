@@ -1,79 +1,78 @@
 import {
   Injectable,
-  BadRequestException,
-  ForbiddenException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
-import { DatabaseService } from '../../../database/database.service';
-import {
-  USER_ALREADY_EXISTS,
-  USER_NOT_FOUND,
-  WRONG_OLD_PASSWORD,
-} from '../../../constants';
-import { PublicUser } from '../../models/public-user.model';
-import { UpdatePasswordDto } from '../dto/update-password.dto';
+import { PrismaService } from '../../../../prisma/prisma.service';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { IUser } from '../../../interfaces/user.interfaces';
+import { UpdatePasswordDto } from '../dto/update-password.dto';
+import { PublicUserDto } from '../dto/public-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private prisma: PrismaService) {}
 
-  async getAllUsers(): Promise<PublicUser[]> {
-    const users = this.databaseService.getAllUsers();
-    return users.map((user) => this.excludePassword(user));
+  async getAllUsers(): Promise<PublicUserDto[]> {
+    const users = await this.prisma.user.findMany();
+    return users.map((user) => new PublicUserDto(user));
   }
 
-  async getPublicUserById(id: string): Promise<PublicUser> {
-    const user = this.databaseService.getUserById(id);
+  async getPublicUserById(id: string): Promise<PublicUserDto> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {
-      throw new NotFoundException(USER_NOT_FOUND);
+      throw new NotFoundException('User not found');
     }
-    return this.excludePassword(user);
+    return new PublicUserDto(user);
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<PublicUser> {
+  async createUser(createUserDto: CreateUserDto): Promise<PublicUserDto> {
     const { login, password } = createUserDto;
-
-    if (this.databaseService.isUserExists(login)) {
-      throw new BadRequestException(USER_ALREADY_EXISTS);
+    const existingUser = await this.prisma.user.findUnique({
+      where: { login },
+    });
+    if (existingUser) {
+      throw new BadRequestException('User with this login already exists');
     }
-
-    const newUser = this.databaseService.createUser(login, password);
-
-    return this.excludePassword(newUser);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await this.prisma.user.create({
+      data: {
+        login,
+        password: hashedPassword,
+      },
+    });
+    return new PublicUserDto(user);
   }
 
   async updateUserPassword(
     id: string,
     updatePasswordDto: UpdatePasswordDto,
-  ): Promise<PublicUser> {
+  ): Promise<PublicUserDto> {
     const { oldPassword, newPassword } = updatePasswordDto;
-
-    const isOldPasswordCorrect =
-      await this.databaseService.validateUserPassword(id, oldPassword);
-
-    if (!isOldPasswordCorrect) {
-      throw new ForbiddenException(WRONG_OLD_PASSWORD);
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
-
-    const updatedUser = this.databaseService.updateUserPassword(
-      id,
-      newPassword,
-    );
-
-    return this.excludePassword(updatedUser);
+    const passwordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!passwordValid) {
+      throw new BadRequestException('Old password is incorrect');
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        password: hashedPassword,
+        version: user.version + 1,
+      },
+    });
+    return new PublicUserDto(updatedUser);
   }
+
   async deleteUser(id: string): Promise<void> {
-    const result = this.databaseService.deleteUser(id);
-    if (!result) {
-      throw new NotFoundException(USER_NOT_FOUND);
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
-  }
-
-  private excludePassword(user: IUser): PublicUser {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...publicUser } = user;
-    return publicUser;
+    await this.prisma.user.delete({ where: { id } });
   }
 }

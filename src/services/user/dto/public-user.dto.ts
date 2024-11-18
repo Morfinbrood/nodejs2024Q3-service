@@ -7,8 +7,17 @@ import {
   MinLength,
   MaxLength,
 } from 'class-validator';
+import { User } from '@prisma/client';
 
 export class PublicUserDto {
+  constructor(user: User) {
+    this.id = user.id;
+    this.login = user.login;
+    this.version = user.version;
+    this.createdAt = Math.floor(user.createdAt.getTime() / 1000);
+    this.updatedAt = Math.floor(user.updatedAt.getTime() / 1000);
+  }
+
   @ApiProperty({
     description: 'UUID of the user',
     example: '0a35dd62-e09f-444b-a628-f4e7c6954f57',

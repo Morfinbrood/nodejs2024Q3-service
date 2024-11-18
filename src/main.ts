@@ -2,21 +2,24 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const prismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app);
+
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // Strip properties that do not have any decorators
-      forbidNonWhitelisted: true, // Throw an error if non-whitelisted properties are present
-      transform: true, // Automatically transform payloads to be objects typed according to their DTO classes
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
-  // Swagger setup
   const config = new DocumentBuilder()
-    .setTitle('Music Home Libriry API')
+    .setTitle('Music Home Library API')
     .setDescription(
       'API for managing users, tracks, albums, artists and favorites',
     )

@@ -1,41 +1,50 @@
-version: '3.8'
-
 services:
-  db:
+
+  postgres:
     image: postgres:13-alpine
+    container_name: postgres
     restart: always
-    environment:
-      POSTGRES_USER: my_database_user
-      POSTGRES_PASSWORD: my_secure_password
-      POSTGRES_DB: home_library_db
+    env_file: .env
     volumes:
-      - db_data:/var/lib/postgresql/data
-      - db_logs:/var/log/postgresql
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
     networks:
-      - app_network
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+  migration:
+    image: morfinall/nodejs2024q3-service-app:latest
+    container_name: migration
+    restart: 'on-failure'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file: .env
+    networks:
+      - app-network
+    command: npm run migrate
 
   app:
-    build:
-      context: .
-      target: development
-    command: npm run start:dev
+    image: morfinall/nodejs2024q3-service-app:latest
+    container_name: app
     restart: always
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    env_file: .env
     ports:
       - '4000:4000'
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-    depends_on:
-      - db
-    volumes:
-      - .:/app
-      - /app/node_modules
     networks:
-      - app_network
+      - app-network
 
 networks:
-  app_network:
+  app-network:
     driver: bridge
 
 volumes:
-  db_data:
-  db_logs:
+  postgres_data:
