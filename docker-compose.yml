@@ -5,9 +5,9 @@ services:
     image: postgres:13-alpine
     restart: always
     environment:
-      POSTGRES_USER: your_db_user
-      POSTGRES_PASSWORD: your_db_password
-      POSTGRES_DB: your_db_name
+      POSTGRES_USER: my_database_user
+      POSTGRES_PASSWORD: my_secure_password
+      POSTGRES_DB: home_library_db
     volumes:
       - db_data:/var/lib/postgresql/data
       - db_logs:/var/log/postgresql
@@ -15,17 +15,15 @@ services:
       - app_network
 
   app:
-    build: .
+    build:
+      context: .
+      target: development
     command: npm run start:dev
     restart: always
     ports:
       - '4000:4000'
     environment:
-      DATABASE_HOST: db
-      DATABASE_PORT: 5432
-      DATABASE_USER: your_db_user
-      DATABASE_PASSWORD: your_db_password
-      DATABASE_NAME: your_db_name
+      DATABASE_URL: ${DATABASE_URL}
     depends_on:
       - db
     volumes:
