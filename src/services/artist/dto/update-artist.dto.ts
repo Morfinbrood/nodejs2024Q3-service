@@ -1,22 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsString,
-  IsBoolean,
-  IsOptional,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
-import { IUpdateArtist } from 'src/interfaces/artist.interfaces';
+import { IsString, IsBoolean, IsOptional } from 'class-validator';
 
-export class UpdateArtistDto implements IUpdateArtist {
+export class UpdateArtistDto {
   @ApiPropertyOptional({
     description: 'Updated name of the artist',
     example: 'Updated Artist Name',
   })
   @IsOptional()
   @IsString()
-  @MinLength(1)
-  @MaxLength(30)
   name?: string;
 
   @ApiPropertyOptional({

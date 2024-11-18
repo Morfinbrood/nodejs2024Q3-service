@@ -6,10 +6,12 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import { FavoritesService } from '../services/favorites.service';
 import { FavoritesResponseDto } from '../dto/favorites-response.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { validate as isUUID } from 'uuid';
 
 @ApiTags('Favorites')
 @Controller('favs')
@@ -23,8 +25,8 @@ export class FavoritesController {
     description: 'List of all favorites',
     type: FavoritesResponseDto,
   })
-  getAllFavorites(): FavoritesResponseDto {
-    return this.favoritesService.getAllFavorites();
+  async getAllFavorites(): Promise<FavoritesResponseDto> {
+    return await this.favoritesService.getAllFavorites();
   }
 
   @Post('track/:id')
@@ -34,8 +36,11 @@ export class FavoritesController {
   @ApiResponse({ status: 400, description: 'Invalid track ID' })
   @ApiResponse({ status: 422, description: 'Track not found' })
   @HttpCode(HttpStatus.CREATED)
-  addTrackToFavorites(@Param('id') trackId: string): void {
-    this.favoritesService.addTrackToFavorites(trackId);
+  async addTrackToFavorites(@Param('id') trackId: string): Promise<void> {
+    if (!isUUID(trackId)) {
+      throw new BadRequestException('Invalid track ID');
+    }
+    await this.favoritesService.addTrackToFavorites(trackId);
   }
 
   @Delete('track/:id')
@@ -45,9 +50,14 @@ export class FavoritesController {
   @ApiResponse({ status: 400, description: 'Invalid track ID' })
   @ApiResponse({ status: 404, description: 'Track is not in favorites' })
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeTrackFromFavorites(@Param('id') trackId: string): void {
-    this.favoritesService.removeTrackFromFavorites(trackId);
+  async removeTrackFromFavorites(@Param('id') trackId: string): Promise<void> {
+    if (!isUUID(trackId)) {
+      throw new BadRequestException('Invalid track ID');
+    }
+    await this.favoritesService.removeTrackFromFavorites(trackId);
   }
+
+  // Аналогично реализуйте эндпоинты для альбомов и артистов
 
   @Post('album/:id')
   @ApiOperation({ summary: 'Add album to favorites' })
@@ -56,8 +66,11 @@ export class FavoritesController {
   @ApiResponse({ status: 400, description: 'Invalid album ID' })
   @ApiResponse({ status: 422, description: 'Album not found' })
   @HttpCode(HttpStatus.CREATED)
-  addAlbumToFavorites(@Param('id') albumId: string): void {
-    this.favoritesService.addAlbumToFavorites(albumId);
+  async addAlbumToFavorites(@Param('id') albumId: string): Promise<void> {
+    if (!isUUID(albumId)) {
+      throw new BadRequestException('Invalid album ID');
+    }
+    await this.favoritesService.addAlbumToFavorites(albumId);
   }
 
   @Delete('album/:id')
@@ -67,8 +80,11 @@ export class FavoritesController {
   @ApiResponse({ status: 400, description: 'Invalid album ID' })
   @ApiResponse({ status: 404, description: 'Album is not in favorites' })
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeAlbumFromFavorites(@Param('id') albumId: string): void {
-    this.favoritesService.removeAlbumFromFavorites(albumId);
+  async removeAlbumFromFavorites(@Param('id') albumId: string): Promise<void> {
+    if (!isUUID(albumId)) {
+      throw new BadRequestException('Invalid album ID');
+    }
+    await this.favoritesService.removeAlbumFromFavorites(albumId);
   }
 
   @Post('artist/:id')
@@ -78,8 +94,11 @@ export class FavoritesController {
   @ApiResponse({ status: 400, description: 'Invalid artist ID' })
   @ApiResponse({ status: 422, description: 'Artist not found' })
   @HttpCode(HttpStatus.CREATED)
-  addArtistToFavorites(@Param('id') artistId: string): void {
-    this.favoritesService.addArtistToFavorites(artistId);
+  async addArtistToFavorites(@Param('id') artistId: string): Promise<void> {
+    if (!isUUID(artistId)) {
+      throw new BadRequestException('Invalid artist ID');
+    }
+    await this.favoritesService.addArtistToFavorites(artistId);
   }
 
   @Delete('artist/:id')
@@ -89,7 +108,12 @@ export class FavoritesController {
   @ApiResponse({ status: 400, description: 'Invalid artist ID' })
   @ApiResponse({ status: 404, description: 'Artist is not in favorites' })
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeArtistFromFavorites(@Param('id') artistId: string): void {
-    this.favoritesService.removeArtistFromFavorites(artistId);
+  async removeArtistFromFavorites(
+    @Param('id') artistId: string,
+  ): Promise<void> {
+    if (!isUUID(artistId)) {
+      throw new BadRequestException('Invalid artist ID');
+    }
+    await this.favoritesService.removeArtistFromFavorites(artistId);
   }
 }

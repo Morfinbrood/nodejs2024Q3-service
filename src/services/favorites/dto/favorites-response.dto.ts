@@ -1,16 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArtistDto } from '../../artist/dto/artist.dto';
-import { AlbumDto } from '../../album/dto/album.dto';
-import { TrackDto } from '../../track/dto/track.dto';
-import { IFavoritesResponse } from 'src/interfaces/favorite.interfaces';
+import { Artist, Album, Track } from '@prisma/client';
 
-export class FavoritesResponseDto implements IFavoritesResponse {
-  @ApiProperty({ type: [ArtistDto] })
-  artists: ArtistDto[];
+export class FavoritesResponseDto {
+  @ApiProperty({
+    description: 'List of favorite artists',
+    type: [Object], // Или вы можете указать конкретный класс ArtistDto, если он у вас есть
+  })
+  artists: Artist[];
 
-  @ApiProperty({ type: [AlbumDto] })
-  albums: AlbumDto[];
+  @ApiProperty({
+    description: 'List of favorite albums',
+    type: [Object], // Или AlbumDto
+  })
+  albums: Album[];
 
-  @ApiProperty({ type: [TrackDto] })
-  tracks: TrackDto[];
+  @ApiProperty({
+    description: 'List of favorite tracks',
+    type: [Object], // Или TrackDto
+  })
+  tracks: Track[];
 }

@@ -3,7 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from '../../../../prisma/prisma.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { PublicUserDto } from '../dto/public-user.dto';
@@ -69,10 +69,10 @@ export class UserService {
   }
 
   async deleteUser(id: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) {
+    try {
+      await this.prisma.user.delete({ where: { id } });
+    } catch {
       throw new NotFoundException('User not found');
     }
-    await this.prisma.user.delete({ where: { id } });
   }
 }

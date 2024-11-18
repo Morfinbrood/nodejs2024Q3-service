@@ -1,23 +1,12 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsUUID,
-  IsString,
-  IsInt,
-  Min,
-  MaxLength,
-  MinLength,
-  IsOptional,
-} from 'class-validator';
-import { ICreateAlbum } from '../../../interfaces/album.interfaces';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsInt, Min, IsUUID, IsOptional } from 'class-validator';
 
-export class CreateAlbumDto implements ICreateAlbum {
+export class CreateAlbumDto {
   @ApiProperty({
     description: 'Name of the album',
     example: 'Test Album',
   })
   @IsString()
-  @MinLength(1)
-  @MaxLength(30)
   name: string;
 
   @ApiProperty({
@@ -28,13 +17,12 @@ export class CreateAlbumDto implements ICreateAlbum {
   @Min(1900)
   year: number;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'UUID of the artist',
     example: '1a56dd72-e09f-444b-a628-f4e7c6954d59',
     nullable: true,
   })
   @IsUUID()
-  @IsString()
   @IsOptional()
-  artistId: string | null;
+  artistId?: string | null;
 }
