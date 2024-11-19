@@ -13,7 +13,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AlbumService } from '../services/album.service';
-import { AlbumDto } from '../dto/album.dto';
+import { Album } from '@prisma/client';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 import { UpdateAlbumDto } from '../dto/update-album.dto';
 import {
@@ -35,9 +35,9 @@ export class AlbumController {
   @ApiResponse({
     status: 200,
     description: 'List of all albums',
-    type: [AlbumDto],
+    type: [CreateAlbumDto],
   })
-  async getAllAlbums(): Promise<AlbumDto[]> {
+  async getAllAlbums(): Promise<Album[]> {
     return this.albumsService.getAllAlbums();
   }
 
@@ -47,11 +47,11 @@ export class AlbumController {
   @ApiResponse({
     status: 200,
     description: 'Album found',
-    type: AlbumDto,
+    type: CreateAlbumDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid album ID' })
   @ApiResponse({ status: 404, description: 'Album not found' })
-  async getAlbumById(@Param('id') id: string): Promise<AlbumDto> {
+  async getAlbumById(@Param('id') id: string): Promise<Album> {
     if (!isUUID(id)) {
       throw new BadRequestException('Invalid album ID');
     }
@@ -64,10 +64,10 @@ export class AlbumController {
   @ApiResponse({
     status: 201,
     description: 'Album successfully created',
-    type: AlbumDto,
+    type: CreateAlbumDto,
   })
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  async createAlbum(@Body() createAlbumDto: CreateAlbumDto): Promise<AlbumDto> {
+  async createAlbum(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
     return this.albumsService.createAlbum(createAlbumDto);
   }
 
@@ -78,14 +78,14 @@ export class AlbumController {
   @ApiResponse({
     status: 200,
     description: 'Album successfully updated',
-    type: AlbumDto,
+    type: UpdateAlbumDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid album ID' })
   @ApiResponse({ status: 404, description: 'Album not found' })
   async updateAlbum(
     @Param('id') id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ): Promise<AlbumDto> {
+  ): Promise<Album> {
     if (!isUUID(id)) {
       throw new BadRequestException('Invalid album ID');
     }

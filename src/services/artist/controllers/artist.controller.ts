@@ -13,7 +13,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ArtistService } from '../services/artist.service';
-import { ArtistDto } from '../dto/artist.dto';
+import { Artist } from '@prisma/client';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
 import {
@@ -35,9 +35,9 @@ export class ArtistController {
   @ApiResponse({
     status: 200,
     description: 'List of all artists',
-    type: [ArtistDto],
+    type: [CreateArtistDto],
   })
-  async getAllArtists(): Promise<ArtistDto[]> {
+  async getAllArtists(): Promise<Artist[]> {
     return this.artistService.getAllArtists();
   }
 
@@ -47,11 +47,11 @@ export class ArtistController {
   @ApiResponse({
     status: 200,
     description: 'Artist found',
-    type: ArtistDto,
+    type: CreateArtistDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid artist ID' })
   @ApiResponse({ status: 404, description: 'Artist not found' })
-  async getArtistById(@Param('id') id: string): Promise<ArtistDto> {
+  async getArtistById(@Param('id') id: string): Promise<Artist> {
     if (!isUUID(id)) {
       throw new BadRequestException('Invalid artist ID');
     }
@@ -64,12 +64,12 @@ export class ArtistController {
   @ApiResponse({
     status: 201,
     description: 'Artist successfully created',
-    type: ArtistDto,
+    type: CreateArtistDto,
   })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async createArtist(
     @Body() createArtistDto: CreateArtistDto,
-  ): Promise<ArtistDto> {
+  ): Promise<Artist> {
     return this.artistService.createArtist(createArtistDto);
   }
 
@@ -80,14 +80,14 @@ export class ArtistController {
   @ApiResponse({
     status: 200,
     description: 'Artist successfully updated',
-    type: ArtistDto,
+    type: UpdateArtistDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid artist ID' })
   @ApiResponse({ status: 404, description: 'Artist not found' })
   async updateArtist(
     @Param('id') id: string,
     @Body() updateArtistDto: UpdateArtistDto,
-  ): Promise<ArtistDto> {
+  ): Promise<Artist> {
     if (!isUUID(id)) {
       throw new BadRequestException('Invalid artist ID');
     }

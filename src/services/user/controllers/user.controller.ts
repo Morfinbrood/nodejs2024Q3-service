@@ -16,11 +16,6 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { PublicUserDto } from '../dto/public-user.dto';
 import {
-  INVALID_USER_ID,
-  USER_NOT_FOUND,
-  WRONG_OLD_PASSWORD,
-} from '../../../constants';
-import {
   ApiTags,
   ApiOperation,
   ApiResponse,
@@ -52,8 +47,8 @@ export class UserController {
     description: 'User found',
     type: PublicUserDto,
   })
-  @ApiResponse({ status: 400, description: INVALID_USER_ID })
-  @ApiResponse({ status: 404, description: USER_NOT_FOUND })
+  @ApiResponse({ status: 400, description: 'Invalid User ID' })
+  @ApiResponse({ status: 404, description: 'User not found' })
   async getUserById(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<PublicUserDto> {
@@ -88,9 +83,9 @@ export class UserController {
     description: 'Password successfully updated',
     type: PublicUserDto,
   })
-  @ApiResponse({ status: 400, description: INVALID_USER_ID })
-  @ApiResponse({ status: 403, description: WRONG_OLD_PASSWORD })
-  @ApiResponse({ status: 404, description: USER_NOT_FOUND })
+  @ApiResponse({ status: 400, description: 'Invalid User ID' })
+  @ApiResponse({ status: 403, description: 'Old password is incorrect' })
+  @ApiResponse({ status: 404, description: 'User not found' })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async updateUserPassword(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -103,8 +98,8 @@ export class UserController {
   @ApiOperation({ summary: 'Delete a user' })
   @ApiParam({ name: 'id', description: 'User UUID', format: 'uuid' })
   @ApiResponse({ status: 204, description: 'User successfully deleted' })
-  @ApiResponse({ status: 400, description: INVALID_USER_ID })
-  @ApiResponse({ status: 404, description: USER_NOT_FOUND })
+  @ApiResponse({ status: 400, description: 'Invalid User ID' })
+  @ApiResponse({ status: 404, description: 'User not found' })
   @HttpCode(204)
   async deleteUser(
     @Param('id', new ParseUUIDPipe()) id: string,

@@ -13,7 +13,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { TrackService } from '../services/track.service';
-import { TrackDto } from '../dto/track.dto';
+import { Track } from '@prisma/client';
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
 import {
@@ -35,9 +35,9 @@ export class TrackController {
   @ApiResponse({
     status: 200,
     description: 'List of all tracks',
-    type: [TrackDto],
+    type: [CreateTrackDto],
   })
-  async getAllTracks(): Promise<TrackDto[]> {
+  async getAllTracks(): Promise<Track[]> {
     return this.tracksService.getAllTracks();
   }
 
@@ -47,11 +47,11 @@ export class TrackController {
   @ApiResponse({
     status: 200,
     description: 'Track found',
-    type: TrackDto,
+    type: CreateTrackDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid track ID' })
   @ApiResponse({ status: 404, description: 'Track not found' })
-  async getTrackById(@Param('id') id: string): Promise<TrackDto> {
+  async getTrackById(@Param('id') id: string): Promise<Track> {
     if (!isUUID(id)) {
       throw new BadRequestException('Invalid track ID');
     }
@@ -64,10 +64,10 @@ export class TrackController {
   @ApiResponse({
     status: 201,
     description: 'Track successfully created',
-    type: TrackDto,
+    type: CreateTrackDto,
   })
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  async createTrack(@Body() createTrackDto: CreateTrackDto): Promise<TrackDto> {
+  async createTrack(@Body() createTrackDto: CreateTrackDto): Promise<Track> {
     return this.tracksService.createTrack(createTrackDto);
   }
 
@@ -78,14 +78,14 @@ export class TrackController {
   @ApiResponse({
     status: 200,
     description: 'Track successfully updated',
-    type: TrackDto,
+    type: UpdateTrackDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid track ID' })
   @ApiResponse({ status: 404, description: 'Track not found' })
   async updateTrack(
     @Param('id') id: string,
     @Body() updateTrackDto: UpdateTrackDto,
-  ): Promise<TrackDto> {
+  ): Promise<Track> {
     if (!isUUID(id)) {
       throw new BadRequestException('Invalid track ID');
     }

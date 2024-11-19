@@ -1,15 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean, MaxLength, MinLength } from 'class-validator';
-import { ICreateArtist } from '../../../interfaces/artist.interfaces';
+import { IsString, IsBoolean } from 'class-validator';
 
-export class CreateArtistDto implements ICreateArtist {
+export class CreateArtistDto {
   @ApiProperty({
     description: 'Name of the artist',
     example: 'Artist Name',
   })
   @IsString()
-  @MinLength(1)
-  @MaxLength(30)
   name: string;
 
   @ApiProperty({
