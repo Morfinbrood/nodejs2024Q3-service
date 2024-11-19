@@ -18,30 +18,17 @@ services:
       timeout: 5s
       retries: 10
 
-  migration:
-    image: morfinall/nodejs2024q3-service-app:latest
-    container_name: migration
-    restart: 'on-failure'
-    depends_on:
-      postgres:
-        condition: service_healthy
-    env_file: .env
-    networks:
-      - app-network
-    command: npm run migrate
 
   app:
-    image: morfinall/nodejs2024q3-service-app:latest
+    image: morfinall/nodejs2024q3-service-app3:latest
     container_name: app
     restart: always
-    depends_on:
-      migration:
-        condition: service_completed_successfully
     env_file: .env
     ports:
       - '${PORT}:${PORT}'
     networks:
       - app-network
+    command: sh -c "npx prisma migrate deploy && node dist/src/main.js"
 
 networks:
   app-network:

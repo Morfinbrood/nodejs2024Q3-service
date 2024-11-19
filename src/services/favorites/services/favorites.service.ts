@@ -11,12 +11,15 @@ import { validate as isUUID } from 'uuid';
 @Injectable()
 export class FavoritesService {
   constructor(private readonly prisma: PrismaService) {}
+  private currentUserId = '38c5bc46-a3a9-415e-9568-ac1739438d33'; // mock user for favorites
 
   async getAllFavorites(): Promise<FavoritesResponseDto> {
     const favoriteTracks = await this.prisma.track.findMany({
       where: {
         favoredByUsers: {
-          some: {},
+          some: {
+            id: this.currentUserId,
+          },
         },
       },
     });
@@ -24,7 +27,9 @@ export class FavoritesService {
     const favoriteAlbums = await this.prisma.album.findMany({
       where: {
         favoredByUsers: {
-          some: {},
+          some: {
+            id: this.currentUserId,
+          },
         },
       },
     });
@@ -32,7 +37,9 @@ export class FavoritesService {
     const favoriteArtists = await this.prisma.artist.findMany({
       where: {
         favoredByUsers: {
-          some: {},
+          some: {
+            id: this.currentUserId,
+          },
         },
       },
     });
@@ -56,11 +63,16 @@ export class FavoritesService {
       throw new UnprocessableEntityException('Track not found');
     }
 
-    // Предполагается, что есть текущий пользователь с id 'currentUserId'
-    const currentUserId = 'currentUserId'; // Замените на реальное получение текущего пользователя
+    const user = await this.prisma.user.findUnique({
+      where: { id: this.currentUserId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
     await this.prisma.user.update({
-      where: { id: currentUserId },
+      where: { id: this.currentUserId },
       data: {
         favoriteTracks: {
           connect: { id: trackId },
@@ -74,10 +86,8 @@ export class FavoritesService {
       throw new BadRequestException('Invalid track ID');
     }
 
-    const currentUserId = 'currentUserId'; // Замените на реальное получение текущего пользователя
-
     const user = await this.prisma.user.findUnique({
-      where: { id: currentUserId },
+      where: { id: this.currentUserId },
       include: { favoriteTracks: true },
     });
 
@@ -93,7 +103,7 @@ export class FavoritesService {
     }
 
     await this.prisma.user.update({
-      where: { id: currentUserId },
+      where: { id: this.currentUserId },
       data: {
         favoriteTracks: {
           disconnect: { id: trackId },
@@ -101,8 +111,6 @@ export class FavoritesService {
       },
     });
   }
-
-  // Аналогично реализуйте методы для альбомов и артистов
 
   async addAlbumToFavorites(albumId: string): Promise<void> {
     if (!isUUID(albumId)) {
@@ -116,10 +124,16 @@ export class FavoritesService {
       throw new UnprocessableEntityException('Album not found');
     }
 
-    const currentUserId = 'currentUserId'; // Замените на реальное получение текущего пользователя
+    const user = await this.prisma.user.findUnique({
+      where: { id: this.currentUserId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
     await this.prisma.user.update({
-      where: { id: currentUserId },
+      where: { id: this.currentUserId },
       data: {
         favoriteAlbums: {
           connect: { id: albumId },
@@ -133,10 +147,8 @@ export class FavoritesService {
       throw new BadRequestException('Invalid album ID');
     }
 
-    const currentUserId = 'currentUserId'; // Замените на реальное получение текущего пользователя
-
     const user = await this.prisma.user.findUnique({
-      where: { id: currentUserId },
+      where: { id: this.currentUserId },
       include: { favoriteAlbums: true },
     });
 
@@ -152,7 +164,7 @@ export class FavoritesService {
     }
 
     await this.prisma.user.update({
-      where: { id: currentUserId },
+      where: { id: this.currentUserId },
       data: {
         favoriteAlbums: {
           disconnect: { id: albumId },
@@ -173,10 +185,16 @@ export class FavoritesService {
       throw new UnprocessableEntityException('Artist not found');
     }
 
-    const currentUserId = 'currentUserId'; // Замените на реальное получение текущего пользователя
+    const user = await this.prisma.user.findUnique({
+      where: { id: this.currentUserId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
     await this.prisma.user.update({
-      where: { id: currentUserId },
+      where: { id: this.currentUserId },
       data: {
         favoriteArtists: {
           connect: { id: artistId },
@@ -190,10 +208,8 @@ export class FavoritesService {
       throw new BadRequestException('Invalid artist ID');
     }
 
-    const currentUserId = 'currentUserId'; // Замените на реальное получение текущего пользователя
-
     const user = await this.prisma.user.findUnique({
-      where: { id: currentUserId },
+      where: { id: this.currentUserId },
       include: { favoriteArtists: true },
     });
 
@@ -209,7 +225,7 @@ export class FavoritesService {
     }
 
     await this.prisma.user.update({
-      where: { id: currentUserId },
+      where: { id: this.currentUserId },
       data: {
         favoriteArtists: {
           disconnect: { id: artistId },

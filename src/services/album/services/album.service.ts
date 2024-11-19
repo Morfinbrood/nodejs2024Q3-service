@@ -20,10 +20,24 @@ export class AlbumService {
     return album;
   }
 
-  async createAlbum(createAlbumDto: CreateAlbumDto): Promise<Album> {
+  async createAlbum(createAlbumDto: CreateAlbumDto) {
+    const { artistId, name, year } = createAlbumDto;
+
+    if (artistId) {
+      const artistExists = await this.prisma.artist.findUnique({
+        where: { id: artistId },
+      });
+
+      if (!artistExists) {
+        throw new NotFoundException(`Artist with id ${artistId} not found`);
+      }
+    }
+
     return this.prisma.album.create({
       data: {
-        ...createAlbumDto,
+        name,
+        year,
+        artistId,
       },
     });
   }
@@ -33,6 +47,17 @@ export class AlbumService {
     updateAlbumDto: UpdateAlbumDto,
   ): Promise<Album> {
     try {
+      const { artistId } = updateAlbumDto;
+      if (artistId) {
+        const artistExists = await this.prisma.artist.findUnique({
+          where: { id: artistId },
+        });
+
+        if (!artistExists) {
+          throw new NotFoundException(`Artist with id ${artistId} not found`);
+        }
+      }
+
       return await this.prisma.album.update({
         where: { id },
         data: {
