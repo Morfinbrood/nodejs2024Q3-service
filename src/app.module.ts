@@ -1,22 +1,23 @@
 import { Module } from '@nestjs/common';
-
-import { DatabaseModule } from './database/database.module';
-import { UserModule } from './services/user/user.module';
-import { TrackModule } from './services/track/track.module';
-import { ArtistModule } from './services/artist/artist.module';
+import { ConfigModule } from '@nestjs/config';
 import { AlbumModule } from './services/album/album.module';
+import { ArtistModule } from './services/artist/artist.module';
+import { TrackModule } from './services/track/track.module';
+import { UserModule } from './services/user/user.module';
 import { FavoritesModule } from './services/favorites/favorites.module';
-// import { AuthModule } from './services/auth/modules/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
-    DatabaseModule,
-    UserModule,
-    TrackModule,
-    ArtistModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    PrismaModule,
     AlbumModule,
+    ArtistModule,
+    TrackModule,
+    UserModule,
     FavoritesModule,
-    // AuthModule,
   ],
   controllers: [],
   providers: [],

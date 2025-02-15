@@ -1,43 +1,78 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DatabaseService } from '../../../database/database.service';
-import { AlbumDto } from '../dto/album.dto';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { Album } from '@prisma/client';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 import { UpdateAlbumDto } from '../dto/update-album.dto';
 
 @Injectable()
 export class AlbumService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async getAllAlbums(): Promise<AlbumDto[]> {
-    return this.databaseService.getAllAlbums();
+  async getAllAlbums(): Promise<Album[]> {
+    return this.prisma.album.findMany();
   }
 
-  async getAlbumById(id: string): Promise<AlbumDto> {
-    const album = this.databaseService.getAlbumById(id);
+  async getAlbumById(id: string): Promise<Album> {
+    const album = await this.prisma.album.findUnique({ where: { id } });
     if (!album) {
       throw new NotFoundException('Album not found');
     }
     return album;
   }
 
-  async createAlbum(createAlbumDto: CreateAlbumDto): Promise<AlbumDto> {
-    return this.databaseService.createAlbum(createAlbumDto);
+  async createAlbum(createAlbumDto: CreateAlbumDto) {
+    const { artistId, name, year } = createAlbumDto;
+
+    if (artistId) {
+      const artistExists = await this.prisma.artist.findUnique({
+        where: { id: artistId },
+      });
+
+      if (!artistExists) {
+        throw new NotFoundException(`Artist with id ${artistId} not found`);
+      }
+    }
+
+    return this.prisma.album.create({
+      data: {
+        name,
+        year,
+        artistId,
+      },
+    });
   }
 
   async updateAlbum(
     id: string,
     updateAlbumDto: UpdateAlbumDto,
-  ): Promise<AlbumDto> {
-    const updatedAlbum = this.databaseService.updateAlbum(id, updateAlbumDto);
-    if (!updatedAlbum) {
+  ): Promise<Album> {
+    try {
+      const { artistId } = updateAlbumDto;
+      if (artistId) {
+        const artistExists = await this.prisma.artist.findUnique({
+          where: { id: artistId },
+        });
+
+        if (!artistExists) {
+          throw new NotFoundException(`Artist with id ${artistId} not found`);
+        }
+      }
+
+      return await this.prisma.album.update({
+        where: { id },
+        data: {
+          ...updateAlbumDto,
+        },
+      });
+    } catch {
       throw new NotFoundException('Album not found');
     }
-    return updatedAlbum;
   }
 
   async deleteAlbum(id: string): Promise<void> {
-    const result = this.databaseService.deleteAlbum(id);
-    if (!result) {
+    try {
+      await this.prisma.album.delete({ where: { id } });
+    } catch {
       throw new NotFoundException('Album not found');
     }
   }

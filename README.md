@@ -21,7 +21,7 @@ npm install
 ## Running application
 
 ```
-npm start
+docker compose up
 ```
 
 After starting the app on port (4000 as default) you can open
@@ -30,7 +30,7 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
 
-After application running open new terminal and enter:
+After application running open new terminal and enter:  
 
 To run all tests without authorization
 
